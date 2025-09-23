@@ -1,0 +1,34 @@
+name: Daily AI News Update
+
+on:
+  schedule:
+    - cron: '30 9 * * *'  # This runs at 9:30 AM UTC every day
+  workflow_dispatch:  # Allows manual trigger of the workflow
+
+jobs:
+  update-news:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        pip install requests
+
+    - name: Fetch AI news
+      run: python fetch_ai_news.py  # This runs the script
+
+    - name: Commit and push changes
+      run: |
+        git config --local user.name "github-actions"
+        git config --local user.email "github-actions@users.noreply.github.com"
+        git add news/latest_news.json  # Or your HTML file if you use HTML
+        git commit -m "Update daily AI news"
+        git push
