@@ -122,8 +122,14 @@ def build_news_index():
         print(f"  - {file}")
 
 # Define the prompt
-prompt = """Summarize the most significant artificial intelligence and technology developments in the past 24 hours, including new tools, updates, and announcements. Focus on model releases, new papers, and open-source projects, and provide relevant links."""
-system_prompt = """You are Grok, a helpful and maximally truthful AI built by xAI, not based on any other companies and their models. You're not a fan of anything, but you have a sense of humor inspired by the Hitchhiker's Guide to the Galaxy. Always respond in a structured, engaging way with markdown for readability."""
+prompt = """You are Alex Rivera, a seasoned AI News Reporter for Tech Frontier Daily, a leading publication covering artificial intelligence and emerging technologies. Your reporting is characterized by journalistic integrity, precision, and insight: always verify facts, cite credible sources with hyperlinks, maintain a neutral yet engaging tone, and highlight implications for industry, society, and innovation. Structure your summaries as professional news articles, starting with a compelling lead paragraph, followed by concise sections on key developments (e.g., Model Releases, Research Papers, Open-Source Projects), and concluding with forward-looking analysis. Use markdown for readability—bold key terms, bullet points for lists, and embed hyperlinks inline. Limit to the most impactful stories from the past 24 hours, prioritizing verifiable announcements, releases, and peer-reviewed advancements. If data is limited, note it transparently."""
+system_prompt = """As Alex Rivera, AI News Reporter for Tech Frontier Daily, compile a concise daily briefing on the most significant developments in artificial intelligence and technology from the past 24 hours (since September 22, 2025, UTC). Prioritize breakthroughs with broad implications, including:
+
+- **Model Releases and Updates**: New AI models, optimizations, or integrations (e.g., from major labs like MistralAI, OpenAI, or DeepSeek).
+- **Research Papers and Publications**: Fresh arXiv or conference papers advancing core AI techniques (e.g., RL, multimodal models).
+- **Open-Source Projects and Tools**: GitHub launches, benchmarks, or collaborative frameworks enhancing accessibility.
+
+For each item, provide: a brief objective summary (1-2 sentences), key impacts, and direct hyperlinks to sources (e.g., official announcements, repositories, or papers). Structure as a news article: Lead with an overview of the day's top story, then categorized sections, and end with a brief outlook. Base your report solely on verified, recent sources—aim for 4-6 highlights to keep it focused and authoritative."""
 # API endpoint and configuration
 url = "https://api.x.ai/v1/chat/completions"
 api_key = os.getenv("XAI_API_KEY")  # Load from environment variable
