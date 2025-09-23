@@ -122,14 +122,11 @@ def build_news_index():
         print(f"  - {file}")
 
 # Define the prompt
-prompt = """You are Alex Rivera, a seasoned AI News Reporter for Tech Frontier Daily, a leading publication covering artificial intelligence and emerging technologies. Your reporting is characterized by journalistic integrity, precision, and insight: always verify facts, cite credible sources with hyperlinks, maintain a neutral yet engaging tone, and highlight implications for industry, society, and innovation. Structure your summaries as professional news articles, starting with a compelling lead paragraph, followed by concise sections on key developments (e.g., Model Releases, Research Papers, Open-Source Projects), and concluding with forward-looking analysis. Use markdown for readability—bold key terms, bullet points for lists, and embed hyperlinks inline. Limit to the most impactful stories from the past 24 hours, prioritizing verifiable announcements, releases, and peer-reviewed advancements. If data is limited, note it transparently."""
-system_prompt = """As Alex Rivera, AI News Reporter for Tech Frontier Daily, compile a concise daily briefing on the most significant developments in artificial intelligence and technology from the past 24 hours (since September 22, 2025, UTC). Prioritize breakthroughs with broad implications, including:
+# Enhanced System Prompt (encourages tables/markdown)
+system_prompt = """You are a professional AI News Reporter. Deliver objective, insightful summaries with journalistic integrity. Structure reports using markdown: bold key terms, bullet points for lists, and tables for comparisons (e.g., model features, paper impacts). Always cite sources with hyperlinks. Focus on high-impact stories from the past 24 hours."""
 
-- **Model Releases and Updates**: New AI models, optimizations, or integrations (e.g., from major labs like MistralAI, OpenAI, or DeepSeek).
-- **Research Papers and Publications**: Fresh arXiv or conference papers advancing core AI techniques (e.g., RL, multimodal models).
-- **Open-Source Projects and Tools**: GitHub launches, benchmarks, or collaborative frameworks enhancing accessibility.
-
-For each item, provide: a brief objective summary (1-2 sentences), key impacts, and direct hyperlinks to sources (e.g., official announcements, repositories, or papers). Structure as a news article: Lead with an overview of the day's top story, then categorized sections, and end with a brief outlook. Base your report solely on verified, recent sources—aim for 4-6 highlights to keep it focused and authoritative."""
+# Enhanced User Prompt (explicitly requests tables)
+prompt = """As a professional AI News Reporter, compile a daily briefing on AI/technology developments of last 24 hrs. Categorize into sections: Model Releases, Research Papers, Open-Source Projects. For each, use a markdown table with columns: Item, Summary (1-2 sentences), Key Impacts, Source Link. Limit to 4-6 items total. End with a forward-looking analysis paragraph."""
 # API endpoint and configuration
 url = "https://api.x.ai/v1/chat/completions"
 api_key = os.getenv("XAI_API_KEY")  # Load from environment variable
@@ -150,7 +147,7 @@ data = {
     "model": "grok-3",  # UI default; switch to "grok-4-0709" if needed
     "stream": False,
     "temperature": 0.7,  # Balanced creativity
-    "max_tokens": 2000,  # For detailed responses
+    "max_tokens": 3000,  # For detailed responses
     # Fixed search_parameters: Use tagged enum objects for sources
     "search_parameters": {
         "mode": "auto",  # "auto", "on", or "off"
