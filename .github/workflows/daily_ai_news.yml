@@ -1,34 +1,52 @@
-name: Daily AI News Update
+import requests
+import json
+import os
+from datetime import datetime
 
-on:
-  schedule:
-    - cron: '30 9 * * *'  # This runs at 9:30 AM UTC every day
-  workflow_dispatch:  # Allows manual trigger of the workflow
+# Define the prompt
+prompt = """Summarize the most significant artificial intelligence and technology developments in the past 24 hours, including new tools, updates, and announcements. Focus on model releases, new papers, and open-source projects, and provide relevant links."""
 
-jobs:
-  update-news:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+# API endpoint and configuration
+url = "https://api.x.ai/v1/chat/completions"
+api_key = os.getenv("XAI_API_KEY")  # Load from environment variable
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
+if not api_key:
+    raise ValueError("XAI_API_KEY environment variable is not set. Please set it in your environment or GitHub Actions secrets.")
 
-    - name: Install dependencies
-      run: |
-        pip install requests
+headers = {
+    "Authorization": f"Bearer {api_key}",
+    "Content-Type": "application/json"
+}
 
-    - name: Fetch AI news
-      run: python fetch_ai_news.py  # This runs the script
+data = {
+    "messages": [
+        {"role": "user", "content": prompt}
+    ],
+    "model": "grok-4",  # Use the latest model; check https://docs.x.ai/docs/models for available models
+    "stream": False
+}
 
-    - name: Commit and push changes
-      run: |
-        git config --local user.name "github-actions"
-        git config --local user.email "github-actions@users.noreply.github.com"
-        git add news/latest_news.json  # Or your HTML file if you use HTML
-        git commit -m "Update daily AI news"
-        git push
+# Make the API call
+response = requests.post(url, headers=headers, json=data)
+
+if response.status_code != 200:
+    raise Exception(f"API request failed with status code {response.status_code}: {response.text}")
+
+result = response.json()["choices"][0]["message"]["content"]
+
+# Prepare data with timestamp
+timestamp = datetime.now().isoformat()
+news_data = {
+    "timestamp": timestamp,
+    "summary": result
+}
+
+# Ensure news/ directory exists
+os.makedirs("news", exist_ok=True)
+
+# Save to JSON file (using timestamp in filename for uniqueness)
+filename = f"news/grok_news_summary_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"
+with open(filename, "w", encoding="utf-8") as f:
+    json.dump(news_data, f, indent=4, ensure_ascii=False)
+
+print(f"Summary saved to {filename}")

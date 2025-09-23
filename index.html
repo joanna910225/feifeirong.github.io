@@ -3,55 +3,336 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feifei Rong - Software Developer</title>
+    <title>AI & Technology News Hub</title>
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; }
-        .container { width: 80%; margin: auto; overflow: hidden; }
-        header { background: #333; color: white; padding-top: 30px; min-height: 70px; border-bottom: #bbb 1px solid; }
-        header a { color: #fff; text-decoration: none; text-transform: uppercase; font-size: 16px; }
-        header ul { padding: 0; list-style: none; }
-        header li { float: left; display: inline; padding: 0 20px 0 20px; }
-        header #branding { float: left; }
-        header #branding h1 { margin: 0; }
-        header nav { float: right; margin-top: 10px; }
-        header .highlight, header .current a { color: #e8491d; font-weight: bold; }
-        header a:hover { color: #ffffff; font-weight: bold; }
-        .showcase { min-height: 400px; text-align: center; color: #fff; background: url('background.jpg') no-repeat 0 -400px; }
-        .showcase h1 { margin-top: 100px; font-size: 55px; margin-bottom: 10px; }
-        .showcase p { font-size: 20px; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            margin: 0; 
+            padding: 0; 
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+        .header {
+            background: linear-gradient(135deg, #76b900 0%, #5a9b00 100%);
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(118, 185, 0, 0.3);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2rem;
+            color: #e8f5e8;
+            font-weight: 300;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .news-block { 
+            border: 1px solid #333333; 
+            margin: 20px 0; 
+            border-radius: 12px; 
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #1e1e1e 0%, #2a2a2a 100%);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        .news-block:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(118, 185, 0, 0.2);
+            border-color: #76b900;
+        }
+        .news-header { 
+            background: linear-gradient(135deg, #2d2d2d 0%, #3a3a3a 100%); 
+            padding: 20px 25px; 
+            cursor: pointer; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            border-bottom: 1px solid #404040;
+        }
+        .news-header:hover { 
+            background: linear-gradient(135deg, #3a3a3a 0%, #4a4a4a 100%);
+        }
+        .news-title { 
+            font-weight: 600; 
+            color: #76b900; 
+            font-size: 1.1rem;
+        }
+        .news-date { 
+            font-size: 14px; 
+            color: #b0b0b0; 
+            font-weight: 500;
+        }
+        .news-toggle { 
+            font-size: 20px; 
+            transition: transform 0.3s ease; 
+            color: #76b900;
+            font-weight: bold;
+        }
+        .news-content { 
+            padding: 0 25px; 
+            max-height: 0; 
+            overflow: hidden; 
+            transition: max-height 0.4s ease, padding 0.4s ease;
+            background: #1a1a1a;
+        }
+        .news-content.expanded { 
+            max-height: 2000px; 
+            padding: 25px; 
+        }
+        .news-content p { 
+            margin: 15px 0; 
+            line-height: 1.7; 
+            color: #e0e0e0;
+        }
+        .news-content strong { 
+            color: #76b900; 
+        }
+        .news-content a { 
+            color: #a8d446; 
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .news-content a:hover { 
+            color: #76b900; 
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div id="branding">
-                <h1><span class="highlight">Your Name</span> - Software Programmer</h1>
-            </div>
-            <nav>
-                <ul>
-                    <li class="current"><a href="index.html">Home</a></li>
-                    <li><a href="about.html">About</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <div class="container">
-        <section class="showcase">
-            <h1>Welcome to My Profile!</h1>
-            <p>I'm a passionate software programmer specialized in.</p>
-        </section>
-        <section class="about">
-            <h1>About Me</h1>
-            <p>
-                Hello! I'm [Your Name], a software programmer with a passion for building scalable web applications and working with data. With a strong foundation in computer science and hands-on experience in developing modern web applications, I am always excited to take on new challenges and build solutions that make an impact.
-            </p>
-        </section>
+    <div class="header">
+        <h1>AI & Technology News Hub</h1>
+        <p>Stay updated with the latest developments in artificial intelligence and technology</p>
     </div>
+    
+    <div class="container">
+        <div id="news-container">
+            <div class="loading-message" style="text-align: center; color: #76b900; font-size: 1.2rem; margin: 40px 0;">
+                Loading news articles...
+            </div>
+        </div>
+    </div> <!-- End container -->
 
-    <footer>
-        <p>Your Name &copy; 2023</p>
-    </footer>
+    <script>
+        // Toggle news content
+        function toggleNews(header) {
+            const content = header.nextElementSibling;
+            const toggle = header.querySelector('.news-toggle');
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                toggle.textContent = '+';
+                toggle.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('expanded');
+                toggle.textContent = '−';
+                toggle.style.transform = 'rotate(180deg)';
+            }
+        }
+        
+        // Extract date from filename for sorting
+        function extractDateFromFilename(filename) {
+            const match = filename.match(/(\d{4}-\d{2}-\d{2})/);
+            return match ? new Date(match[1]) : new Date(0);
+        }
+        
+        // Format date for display
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
+        }
+        
+        // Create news block HTML
+        function createNewsBlock(newsData, filename, isFirst = false) {
+            const date = extractDateFromFilename(filename);
+            const formattedDate = formatDate(date);
+            
+            const newsBlock = document.createElement('div');
+            newsBlock.className = 'news-block';
+            
+            const header = document.createElement('div');
+            header.className = 'news-header';
+            header.onclick = () => toggleNews(header);
+            header.innerHTML = `
+                <span class="news-title">AI & Tech News Summary</span>
+                <span class="news-date">${formattedDate}</span>
+                <span class="news-toggle">${isFirst ? '−' : '+'}</span>
+            `;
+            
+            const content = document.createElement('div');
+            content.className = isFirst ? 'news-content expanded' : 'news-content';
+            
+            // Format the summary with proper HTML
+            const formattedSummary = newsData.summary
+                .replace(/\n\n/g, '<br><br>')
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+            
+            content.innerHTML = `<p>${formattedSummary}</p>`;
+            
+            newsBlock.appendChild(header);
+            newsBlock.appendChild(content);
+            
+            return newsBlock;
+        }
+        
+        // Load all news files from JSON
+        async function loadNewsContent() {
+            const newsContainer = document.getElementById('news-container');
+            const loadingMessage = newsContainer.querySelector('.loading-message');
+            
+            try {
+                // First, try to load the index file from root directory
+                let newsFiles = [];
+                
+                try {
+                    const indexResponse = await fetch('./index.json');
+                    if (indexResponse.ok) {
+                        const indexData = await indexResponse.json();
+                        newsFiles = indexData.files || [];
+                        console.log(`Loaded ${newsFiles.length} files from index.json (updated: ${indexData.last_updated})`);
+                    }
+                } catch (error) {
+                    console.log('No index.json found in root, using fallback method');
+                }
+                
+                // Fallback: try to discover files by attempting common patterns
+                if (newsFiles.length === 0) {
+                    console.log('Attempting to discover news files...');
+                    
+                    // Try to find files by checking common date patterns
+                    const today = new Date();
+                    const discoveredFiles = new Set();
+                    
+                    // Check last 30 days for potential files
+                    for (let i = 0; i < 30; i++) {
+                        const checkDate = new Date(today);
+                        checkDate.setDate(today.getDate() - i);
+                        const dateStr = checkDate.toISOString().split('T')[0];
+                        
+                        // Try different time patterns throughout the day
+                        const timePatterns = [
+                            '16-37-05', '12-00-00', '18-00-00', '09-00-00', 
+                            '15-30-00', '20-15-30', '08-45-15', '14-22-10'
+                        ];
+                        
+                        for (const timePattern of timePatterns) {
+                            const filename = `grok_news_summary_${dateStr}_${timePattern}.json`;
+                            try {
+                                const response = await fetch(`./news/${filename}`, { method: 'HEAD' });
+                                if (response.ok) {
+                                    discoveredFiles.add(filename);
+                                    console.log(`Found: ${filename}`);
+                                }
+                            } catch (error) {
+                                // File doesn't exist, continue
+                            }
+                        }
+                        
+                        // If we found some files, we can stop early
+                        if (discoveredFiles.size >= 10) break;
+                    }
+                    
+                    newsFiles = Array.from(discoveredFiles);
+                    
+                    // If still no files found, try alternative discovery method
+                    if (newsFiles.length === 0) {
+                        // Try to get directory listing via common patterns
+                        const commonPatterns = [
+                            'grok_news_summary_2025-09-24_16-37-05.json',
+                            'grok_news_summary_2025-09-23_16-37-05.json',
+                            'ai_news_summary.json',
+                            'latest_news.json',
+                            'news_summary.json'
+                        ];
+                        
+                        for (const pattern of commonPatterns) {
+                            try {
+                                const response = await fetch(`./news/${pattern}`);
+                                if (response.ok) {
+                                    newsFiles.push(pattern);
+                                }
+                            } catch (error) {
+                                // File doesn't exist, continue
+                            }
+                        }
+                    }
+                }
+                
+                if (newsFiles.length === 0) {
+                    throw new Error('No news files found');
+                }
+                
+                // Sort files by date (newest first)
+                newsFiles.sort((a, b) => {
+                    const dateA = extractDateFromFilename(a);
+                    const dateB = extractDateFromFilename(b);
+                    return dateB - dateA;
+                });
+                
+                // Load and display each news file
+                const newsBlocks = [];
+                
+                for (let i = 0; i < newsFiles.length; i++) {
+                    const filename = newsFiles[i];
+                    try {
+                        const response = await fetch(`./news/${filename}`);
+                        if (!response.ok) {
+                            throw new Error(`Failed to load ${filename}`);
+                        }
+                        
+                        const newsData = await response.json();
+                        const newsBlock = createNewsBlock(newsData, filename, i === 0);
+                        newsBlocks.push(newsBlock);
+                        
+                    } catch (error) {
+                        console.error(`Error loading ${filename}:`, error);
+                        
+                        // Create error block
+                        const errorBlock = document.createElement('div');
+                        errorBlock.className = 'news-block';
+                        errorBlock.innerHTML = `
+                            <div class="news-header">
+                                <span class="news-title">Error loading ${filename}</span>
+                                <span class="news-date">${formatDate(extractDateFromFilename(filename))}</span>
+                                <span class="news-toggle">!</span>
+                            </div>
+                        `;
+                        newsBlocks.push(errorBlock);
+                    }
+                }
+                
+                // Remove loading message and add news blocks
+                loadingMessage.remove();
+                newsBlocks.forEach(block => newsContainer.appendChild(block));
+                
+                if (newsBlocks.length === 0) {
+                    newsContainer.innerHTML = '<div style="text-align: center; color: #b0b0b0; margin: 40px 0;">No news articles found.</div>';
+                }
+                
+            } catch (error) {
+                console.error('Error loading news:', error);
+                loadingMessage.innerHTML = `
+                    <div style="color: #ff6b6b;">
+                        Error loading news articles. Please make sure the news files are accessible.
+                    </div>
+                `;
+            }
+        }
+        
+        // Load news when page loads
+        document.addEventListener('DOMContentLoaded', loadNewsContent);
+    </script>
 </body>
 </html>
