@@ -24,6 +24,8 @@ jobs:
 
     - name: Fetch AI news
       run: python fetch_ai_news.py  # This runs the script
+      env:
+        XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
 
     - name: Commit and push changes
       run: |

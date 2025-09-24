@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI & Technology News Hub</title>
+    <!-- Markdown parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
     <style>
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -108,6 +110,78 @@
             color: #76b900; 
             text-decoration: underline;
         }
+        
+        /* Markdown content styling */
+        .news-content h1, .news-content h2, .news-content h3 {
+            color: #76b900;
+            margin: 20px 0 15px 0;
+        }
+        .news-content h1 { font-size: 1.8rem; }
+        .news-content h2 { font-size: 1.5rem; }
+        .news-content h3 { font-size: 1.3rem; }
+        
+        .news-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #2a2a2a;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .news-content th {
+            background: #76b900;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .news-content td {
+            padding: 12px;
+            border-bottom: 1px solid #404040;
+        }
+        .news-content tr:last-child td {
+            border-bottom: none;
+        }
+        .news-content tr:nth-child(even) {
+            background: #252525;
+        }
+        
+        .news-content ul, .news-content ol {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+        .news-content li {
+            margin: 8px 0;
+        }
+        
+        .news-content blockquote {
+            border-left: 4px solid #76b900;
+            margin: 20px 0;
+            padding: 10px 20px;
+            background: #2a2a2a;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .news-content code {
+            background: #333;
+            color: #76b900;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .news-content pre {
+            background: #1a1a1a;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .news-content pre code {
+            background: none;
+            padding: 0;
+        }
     </style>
 </head>
 <body>
@@ -172,14 +246,25 @@
             const content = document.createElement('div');
             content.className = isFirst ? 'news-content expanded' : 'news-content';
             
-            // Format the summary with proper HTML
-            const formattedSummary = newsData.summary
-                .replace(/\n\n/g, '<br><br>')
-                .replace(/\n/g, '<br>')
-                .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
-            
-            content.innerHTML = `<p>${formattedSummary}</p>`;
+            // Parse markdown to HTML using marked.js
+            if (typeof marked !== 'undefined') {
+                try {
+                    const htmlContent = marked.parse(newsData.summary);
+                    content.innerHTML = htmlContent;
+                } catch (error) {
+                    console.error('Markdown parsing error:', error);
+                    content.innerHTML = `<p>${newsData.summary}</p>`;
+                }
+            } else {
+                // Fallback to simple text formatting if marked.js not available
+                const formattedSummary = newsData.summary
+                    .replace(/\n\n/g, '<br><br>')
+                    .replace(/\n/g, '<br>')
+                    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+                
+                content.innerHTML = `<p>${formattedSummary}</p>`;
+            }
             
             newsBlock.appendChild(header);
             newsBlock.appendChild(content);
@@ -331,8 +416,25 @@
             }
         }
         
+        // Initialize marked.js when loaded
+        function initializeMarked() {
+            if (typeof marked !== 'undefined') {
+                marked.setOptions({
+                    breaks: true,
+                    gfm: true, // GitHub Flavored Markdown
+                    sanitize: false // Allow HTML (be careful in production)
+                });
+                console.log('Marked.js initialized successfully');
+            } else {
+                console.warn('Marked.js not available, using fallback formatting');
+            }
+        }
+        
         // Load news when page loads
-        document.addEventListener('DOMContentLoaded', loadNewsContent);
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMarked();
+            loadNewsContent();
+        });
     </script>
 </body>
 </html>
