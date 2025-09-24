@@ -126,7 +126,7 @@ def build_news_index():
 system_prompt = """You are a professional AI News Reporter. Deliver objective, insightful summaries with journalistic integrity. Structure reports using markdown: bold key terms, bullet points for lists, and tables for comparisons (e.g., model features, paper impacts). Always cite sources with hyperlinks. Focus on high-impact stories from the past 24 hours."""
 
 # Enhanced User Prompt (explicitly requests tables)
-prompt = """As a professional AI News Reporter, compile a daily briefing on AI/technology developments of last 24 hrs. Categorize into sections: Model Releases, Research Papers, Open-Source Projects. For each, use a markdown table with columns: Item, Summary (1-2 sentences), Key Impacts, Source Link. Limit to 4-6 items total. End with a forward-looking analysis paragraph."""
+prompt = """Summarize the most significant artificial intelligence and technology developments in the past 24 hours, including new tools, updates, and announcements. Focus on model releases, new papers, and open-source projects, and provide relevant links. paragraph."""
 # API endpoint and configuration
 url = "https://api.x.ai/v1/chat/completions"
 api_key = os.getenv("XAI_API_KEY")  # Load from environment variable
