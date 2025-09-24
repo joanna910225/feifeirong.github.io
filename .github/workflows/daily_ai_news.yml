@@ -31,6 +31,6 @@ jobs:
       run: |
         git config --local user.name "github-actions"
         git config --local user.email "github-actions@users.noreply.github.com"
-        git add news/latest_news.json  # Or your HTML file if you use HTML
+        git add news/grok_news_summary_*.json  # Or your HTML file if you use HTML
         git commit -m "Update daily AI news"
         git push
