@@ -8,6 +8,8 @@ on:
 jobs:
   update-news:
     runs-on: ubuntu-latest
+    permissions:  # Add this: Grants write access for pushes
+      contents: write
     
     steps:
     - name: Checkout repository
@@ -29,8 +31,8 @@ jobs:
 
     - name: Commit and push changes
       run: |
-        git config --local user.name "github-actions"
-        git config --local user.email "github-actions@users.noreply.github.com"
-        git add news/grok_news_summary_*.json  # Or your HTML file if you use HTML
-        git commit -m "Update daily AI news"
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add news/*
+        git commit -m "Update daily AI news [$(date +%Y-%m-%d)]" || exit 0
         git push
