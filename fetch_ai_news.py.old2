@@ -1,11 +1,7 @@
 import requests
 import json
 import os
-import re
 from datetime import datetime, timedelta, timezone
-from pathlib import Path
-# from dotenv import load_dotenv
-# load_dotenv()  # Load environment variables from .env file
 
 # API details (get your key from https://x.ai/api)
 API_URL = "https://api.x.ai/v1/chat/completions"  # Adjust if different
@@ -52,18 +48,76 @@ payload = {
     "messages": messages,
     "temperature": 0.5,
     "max_tokens": 3000,
-    "search_parameters": {
-        "mode": "on",  # Enable live search
-        "return_citations": True,  # Return citations for search results
-        "max_search_results": 20,  # Limit search results
-        "from_date": yesterday,  # Search from yesterday
-        "to_date": now.strftime("%Y-%m-%d"),  # Search until today
-        "sources": [
-            {"type": "web"},
-            {"type": "news"},
-            {"type": "x"}
-        ]
-    }
+    "tools": [  # Define tools with proper JSON schema for parameters
+        {
+            "type": "function",
+            "function": {
+                "name": "web_search",
+                "description": "Search the web for information.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string", "description": "The search query."},
+                        "num_results": {"type": "integer", "description": "Number of results, default 10, max 30."}
+                    },
+                    "required": ["query"]
+                }
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "x_keyword_search",
+                "description": "Advanced search for X posts.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string", "description": "The search query with operators."},
+                        "limit": {"type": "integer", "description": "Number of posts, default 10."},
+                        "mode": {"type": "string", "enum": ["Top", "Latest"], "description": "Sort mode, default Top."}
+                    },
+                    "required": ["query"]
+                }
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "x_semantic_search",
+                "description": "Semantic search for X posts.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string", "description": "Semantic query."},
+                        "limit": {"type": "integer", "description": "Number of posts, default 10."},
+                        "from_date": {"type": "string", "description": "From date YYYY-MM-DD."},
+                        "to_date": {"type": "string", "description": "To date YYYY-MM-DD."},
+                        "exclude_usernames": {"type": "array", "items": {"type": "string"}, "description": "Exclude usernames."},
+                        "usernames": {"type": "array", "items": {"type": "string"}, "description": "Include usernames."},
+                        "min_score_threshold": {"type": "number", "description": "Min relevancy score, default 0.18."}
+                    },
+                    "required": ["query"]
+                }
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "browse_page",
+                "description": "Browse a webpage and summarize based on instructions.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "url": {"type": "string", "description": "The URL to browse."},
+                        "instructions": {"type": "string", "description": "Instructions for summarization."}
+                    },
+                    "required": ["url", "instructions"]
+                }
+            }
+        }
+        # Add more tools as needed, following the same pattern
+    ],
+    "tool_choice": "auto"  # Encourage automatic tool use
 }
 
 headers = {
@@ -71,95 +125,75 @@ headers = {
     "Content-Type": "application/json"
 }
 
-def extract_date_from_filename(filename):
-    """Extract date from filename for sorting."""
-    match = re.search(r'(\d{4}-\d{2}-\d{2})', filename)
-    if match:
-        return datetime.strptime(match.group(1), '%Y-%m-%d')
-    return datetime.min
+# Function to execute tools (placeholder: implement actual tool logic here)
+def execute_tool(function_name, args):
+    # This is where you implement the tool calls client-side.
+    # For example, use external libraries/APIs to perform the search.
+    # Below are dummy implementations; replace with real ones (e.g., use serpapi for web_search, twitter API for x_search).
+    if function_name == "web_search":
+        # Dummy: Simulate web search result
+        return {"results": ["Dummy web search result for query: " + args.get("query", "")]}
+    elif function_name == "x_keyword_search":
+        # Dummy: Simulate X post search
+        return {"posts": ["Dummy X post for query: " + args.get("query", "")]}
+    elif function_name == "x_semantic_search":
+        return {"posts": ["Dummy semantic X post for query: " + args.get("query", "")]}
+    elif function_name == "browse_page":
+        # Dummy: Simulate page browse
+        return {"summary": "Dummy summary for URL: " + args.get("url", "") + " with instructions: " + args.get("instructions", "")}
+    else:
+        return {"error": "Unknown tool"}
 
-def cleanup_old_news_files():
-    """Remove news files older than 30 days."""
-    news_dir = Path(output_folder)
-    if not news_dir.exists():
-        return
-    
-    cutoff_date = now - timedelta(days=30)
-    removed_files = []
-    
-    for file in news_dir.glob('*.json'):
-        if file.name == 'index.json':
-            continue
-            
-        file_date = extract_date_from_filename(file.name)
-        if file_date != datetime.min and file_date.date() < cutoff_date.date():
-            file.unlink()
-            removed_files.append(file.name)
-    
-    if removed_files:
-        print(f"Removed {len(removed_files)} old news files (older than 30 days)")
+# Agent loop to handle tool calls (up to 5 iterations to prevent infinite loops)
+max_iterations = 5
+for _ in range(max_iterations):
+    response = requests.post(API_URL, headers=headers, data=json.dumps(payload))
+    if response.status_code != 200:
+        print(f"Error: {response.status_code} - {response.text}")
+        break
 
-def update_index_json():
-    """Update index.json with current news files."""
-    news_dir = Path(output_folder)
-    
-    if not news_dir.exists():
-        return
-    
-    # Find all JSON files (excluding index.json)
-    json_files = []
-    for file in news_dir.glob('*.json'):
-        if file.name != 'index.json':
-            json_files.append(file.name)
-    
-    # Sort by date (newest first)
-    json_files.sort(key=extract_date_from_filename, reverse=True)
-    
-    # Create index data with metadata
-    index_data = {
-        "last_updated": now.isoformat(),
-        "total_files": len(json_files),
-        "files": json_files
-    }
-    
-    # Write to root directory
-    with open('index.json', 'w', encoding='utf-8') as f:
-        json.dump(index_data, f, indent=2, ensure_ascii=False)
-    
-    print(f"Updated index.json with {len(json_files)} news files")
-
-# Simplified request without tool handling - using built-in live search
-response = requests.post(API_URL, headers=headers, data=json.dumps(payload))
-
-if response.status_code != 200:
-    print(f"Error: {response.status_code} - {response.text}")
-else:
     result = response.json()
-    if 'choices' in result and result['choices']:
-        message = result['choices'][0]['message']
+    if 'choices' not in result or not result['choices']:
+        print("No choices in response")
+        break
+
+    message = result['choices'][0]['message']
+    messages.append(message)  # Add assistant's message to conversation
+
+    if 'tool_calls' not in message:
+        # No more tool calls; this is the final response
         final_content = message['content']
-        
-        # Extract citations if available
-        citations = message.get('citations', [])
-        
         # Save the final summary to JSON file
         save_data = {
             "timestamp": timestamp,
-            "summary": final_content,
-            "citations": citations
+            "summary": final_content
         }
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(save_data, f, ensure_ascii=False, indent=4)
         print(f"Summary saved to {output_file}")
         print(final_content)
-        if citations:
-            print("\nCitations:")
-            for i, citation in enumerate(citations, 1):
-                print(f"{i}. {citation}")
+        break
+
+    # Handle tool calls
+    tool_calls = message['tool_calls']
+    for tool_call in tool_calls:
+        function_name = tool_call['function']['name']
+        args_str = tool_call['function']['arguments']
+        args = json.loads(args_str)
+        print(f"Executing tool: {function_name} with args {args}")
         
-        # Clean up old files and update index
-        cleanup_old_news_files()
-        update_index_json()
+        # Execute the tool and get result
+        tool_result = execute_tool(function_name, args)
         
-    else:
-        print("No choices in response")
+        # Append tool response as a new message
+        messages.append({
+            "role": "tool",
+            "content": json.dumps(tool_result),
+            "tool_call_id": tool_call['id']  # Required for some APIs
+        })
+
+    # Update payload for next iteration with accumulated messages
+    payload["messages"] = messages
+
+else:
+    print("Max iterations reached without final response")

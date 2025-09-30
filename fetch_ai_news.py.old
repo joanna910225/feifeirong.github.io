@@ -1,0 +1,328 @@
+import requests
+import json
+import os
+import re
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+def extract_date_from_filename(filename):
+    """Extract date from filename for sorting."""
+    match = re.search(r'(\d{4}-\d{2}-\d{2})', filename)
+    if match:
+        return datetime.strptime(match.group(1), '%Y-%m-%d')
+    return datetime.min
+
+def format_content_to_html(content):
+    """Convert markdown-like content to HTML."""
+    # Replace markdown formatting
+    content = re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', content)
+    content = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', content)
+    
+    # Handle line breaks
+    content = content.replace('\n\n', '<br><br>')
+    content = content.replace('\n', '<br>')
+    
+    return content
+
+def create_news_block_html(news_data, filename, is_first=False):
+    """Create HTML for a single news block."""
+    date = extract_date_from_filename(filename)
+    formatted_date = date.strftime('%Y-%m-%d')
+    
+    formatted_content = format_content_to_html(news_data['summary'])
+    
+    expanded_class = 'expanded' if is_first else ''
+    toggle_symbol = '−' if is_first else '+'
+    
+    return f'''
+    <div class="news-block">
+        <div class="news-header" onclick="toggleNews(this)">
+            <span class="news-title">AI & Tech News Summary</span>
+            <span class="news-date">{formatted_date}</span>
+            <span class="news-toggle">{toggle_symbol}</span>
+        </div>
+        <div class="news-content {expanded_class}">
+            <p>{formatted_content}</p>
+        </div>
+    </div>'''
+
+def generate_news_html():
+    """Generate HTML file with all news articles."""
+    news_dir = Path('news')
+    
+    # Find all JSON files (excluding index.json)
+    json_files = []
+    for file in news_dir.glob('*.json'):
+        if file.name != 'index.json':
+            json_files.append(file.name)
+    
+    if not json_files:
+        print("No news JSON files found!")
+        return
+    
+    # Sort by date (newest first)
+    json_files.sort(key=extract_date_from_filename, reverse=True)
+    
+    # Generate HTML blocks
+    html_blocks = []
+    for i, filename in enumerate(json_files):
+        try:
+            with open(news_dir / filename, 'r', encoding='utf-8') as f:
+                news_data = json.load(f)
+            
+            html_block = create_news_block_html(news_data, filename, i == 0)
+            html_blocks.append(html_block)
+            
+        except Exception as e:
+            print(f"Error processing {filename}: {e}")
+            continue
+    
+    # Write complete HTML file
+    html_content = '\n'.join(html_blocks)
+    
+    with open('news_content.html', 'w', encoding='utf-8') as f:
+        f.write(html_content)
+    
+    print(f"Generated news_content.html with {len(html_blocks)} articles")
+
+def build_news_index():
+    """Build index.json file in root directory with all news files."""
+    news_dir = Path('news')
+    
+    if not news_dir.exists():
+        print("Warning: news/ directory not found!")
+        return
+    
+    # Find all JSON files (excluding index.json)
+    json_files = []
+    for file in news_dir.glob('*.json'):
+        if file.name != 'index.json':
+            json_files.append(file.name)
+    
+    if not json_files:
+        print("No news JSON files found!")
+        return
+    
+    # Sort by date (newest first)
+    json_files.sort(key=extract_date_from_filename, reverse=True)
+    
+    # Create index data with metadata
+    index_data = {
+        "last_updated": datetime.now().isoformat(),
+        "total_files": len(json_files),
+        "files": json_files
+    }
+    
+    # Write to root directory
+    with open('index.json', 'w', encoding='utf-8') as f:
+        json.dump(index_data, f, indent=2, ensure_ascii=False)
+    
+    print(f"Built index.json with {len(json_files)} news files:")
+    for file in json_files:
+        print(f"  - {file}")
+
+# Define the prompt
+## Dynamic date for 24h ago
+now = datetime.now(timezone.utc)
+yesterday = (now - timedelta(days=1)).strftime("%Y-%m-%d")
+
+system_prompt = f"""You are an AI news curator specializing in artificial intelligence and technology. Your task is to provide concise, accurate summaries of the most significant developments from the past 24 hours (strictly from {yesterday} to now). Focus on key areas like new model releases (e.g., LLMs, vision models, MoE architectures), research papers (e.g., arXiv uploads, conference preprints), open-source projects (e.g., GitHub repos, Hugging Face models/datasets), tools, software updates, and major announcements from companies or organizations.
+
+Always use tools to gather real-time data:
+- Start with x_keyword_search or x_semantic_search for X posts, using operators like since:YYYY-MM-DD until:YYYY-MM-DD, min_faves:50, filter:has_engagement to find high-impact discussions.
+- Use web_search or web_search_with_snippets for broader web results, querying sites like arxiv.org, huggingface.co/blog, github.com/trending, or news outlets (e.g., site:techcrunch.com OR site:venturebeat.com).
+- If results are limited, chain tools: Follow up on links from initial searches with browse_page for detailed summaries.
+- Cross-verify claims from social media with official sources.
+
+Structure your response as:
+- A brief intro with timestamp.
+- Sections: Model Releases and Updates, New Research Papers (in a table), Open-Source Projects and Tools.
+- Bulleted or tabulated items with key details, impact, and verifiable links.
+- Inline citations via render components if applicable.
+
+Prioritize objectivity, avoid hype, and note if info is unverified. If data is sparse, explain and suggest official checks. Ensure information is up-to-date as of the query time.
+"""
+
+user_prompt = f"""Summarize the most significant artificial intelligence and technology developments in the past 24 hours (from {yesterday} to now), including new tools, updates, and announcements. Focus on model releases, new papers, and open-source projects, and provide relevant links.
+"""
+
+# API endpoint and configuration
+url = "https://api.x.ai/v1/chat/completions"
+api_key = os.getenv("XAI_API_KEY")  # Load from environment variable
+
+if not api_key:
+    raise ValueError("XAI_API_KEY environment variable is not set. Please set it in your environment or GitHub Actions secrets.")
+
+headers = {
+    "Authorization": f"Bearer {api_key}",
+    "Content-Type": "application/json"
+}
+
+# data = {
+#     "messages": [
+#         {"role": "system", "content": system_prompt},
+#         {"role": "user", "content": prompt}
+#     ],
+#     "model": "grok-3",  # UI default; switch to "grok-4-0709" if needed
+#     "stream": False,
+#     "max_tokens": 4000,  # For detailed responses
+#     "temperature": 0.4,  # Balanced creativity
+#     # Fixed search_parameters: Use tagged enum objects for sources
+#     "search_parameters": {
+#         "mode": "auto",  # "auto", "on", or "off"
+#         "sources": [
+#             {"type": "web"},  # Correct field for web search
+#             {"type": "x"}     # Correct field for X posts
+#         ]
+#         # Optional: Add date filters, e.g., "from_date": "2025-09-22" (ISO format)
+#     }
+# }
+
+# # Make the API call
+# response = requests.post(url, headers=headers, json=data)
+
+# if response.status_code != 200:
+#     raise Exception(f"API request failed with status code {response.status_code}: {response.text}")
+
+# result = response.json()["choices"][0]["message"]["content"]
+
+# # Prepare data with timestamp
+# timestamp = datetime.now().isoformat()
+# news_data = {
+#     "timestamp": timestamp,
+#     "summary": result
+# }
+
+# # Ensure news/ directory exists
+# os.makedirs("news", exist_ok=True)
+
+# # Save to JSON file (using timestamp in filename for uniqueness)
+# filename = f"news/grok_news_summary_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"
+# with open(filename, "w", encoding="utf-8") as f:
+#     json.dump(news_data, f, indent=4, ensure_ascii=False)
+
+# print(f"Summary saved to {filename}")
+
+
+payload = {
+    "model": "grok-4",  # Or "grok-3"
+    "messages": [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_prompt}
+    ],
+    "temperature": 0.5,
+    "max_tokens": 3000,
+    "tools": [  # Define tools with proper JSON schema for parameters
+        {
+            "type": "function",
+            "function": {
+                "name": "web_search",
+                "description": "Search the web for information.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string", "description": "The search query."},
+                        "num_results": {"type": "integer", "description": "Number of results, default 10, max 30."}
+                    },
+                    "required": ["query"]
+                }
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "x_keyword_search",
+                "description": "Advanced search for X posts.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string", "description": "The search query with operators."},
+                        "limit": {"type": "integer", "description": "Number of posts, default 10."},
+                        "mode": {"type": "string", "enum": ["Top", "Latest"], "description": "Sort mode, default Top."}
+                    },
+                    "required": ["query"]
+                }
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "x_semantic_search",
+                "description": "Semantic search for X posts.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string", "description": "Semantic query."},
+                        "limit": {"type": "integer", "description": "Number of posts, default 10."},
+                        "from_date": {"type": "string", "description": "From date YYYY-MM-DD."},
+                        "to_date": {"type": "string", "description": "To date YYYY-MM-DD."},
+                        "exclude_usernames": {"type": "array", "items": {"type": "string"}, "description": "Exclude usernames."},
+                        "usernames": {"type": "array", "items": {"type": "string"}, "description": "Include usernames."},
+                        "min_score_threshold": {"type": "number", "description": "Min relevancy score, default 0.18."}
+                    },
+                    "required": ["query"]
+                }
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "browse_page",
+                "description": "Browse a webpage and summarize based on instructions.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "url": {"type": "string", "description": "The URL to browse."},
+                        "instructions": {"type": "string", "description": "Instructions for summarization."}
+                    },
+                    "required": ["url", "instructions"]
+                }
+            }
+        }
+        # Add more tools as needed, following the same pattern
+    ],
+    "tool_choice": "auto"  # Encourage automatic tool use
+}
+response = requests.post(url, headers=headers, data=json.dumps(payload))
+if response.status_code == 200:
+    result = response.json()
+    # Handle potential tool calls: If 'choices[0].message.tool_calls' exists, parse and execute client-side, then make follow-up API call
+    if 'choices' in result and result['choices'] and 'message' in result['choices'][0] and 'tool_calls' in result['choices'][0]['message']:
+        # Tool calls detected - for now, just get the content from the message
+        print("Tool calls detected, but using message content directly")
+        final_content = result['choices'][0]['message'].get('content', 'No content available')
+        if final_content and final_content.strip():
+            # Save the final summary to JSON file
+            save_data = {
+                "timestamp": datetime.now().isoformat(),
+                "summary": final_content
+            }
+            os.makedirs("news", exist_ok=True)
+            filename = f"news/grok_news_summary_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"
+            with open(filename, 'w', encoding='utf-8') as f:
+                json.dump(save_data, f, ensure_ascii=False, indent=4)
+            print(f"Summary saved to {filename}")
+        else:
+            print("No content available from tool calls")
+    else:
+        final_content = result['choices'][0]['message']['content']
+        # Save the final summary to JSON file
+        save_data = {
+            "timestamp": datetime.now().isoformat(),
+            "summary": final_content
+        }
+        filename = f"news/grok_news_summary_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"
+        with open(filename, 'w',encoding='utf-8') as f:
+            json.dump(save_data, f, ensure_ascii=False, indent=4)
+        print(f"Summary saved to {filename}")
+        print(final_content)
+else:
+    print(f"Error: {response.status_code} - {response.text}")
+
+# Generate HTML for all news files
+generate_news_html()
+
+# Build index.json in root directory
+build_news_index()
+
+print("News HTML file and index updated")

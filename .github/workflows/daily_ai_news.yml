@@ -22,7 +22,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install requests
+        pip install requests beautifulsoup4
 
     - name: Fetch AI news
       run: python fetch_ai_news.py  # This runs the script
