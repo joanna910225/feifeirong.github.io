@@ -1,9 +1,10 @@
 import requests
 import json
 import os
+import re
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 # from dotenv import load_dotenv
-
 # load_dotenv()  # Load environment variables from .env file
 
 # API details (get your key from https://x.ai/api)
@@ -70,6 +71,63 @@ headers = {
     "Content-Type": "application/json"
 }
 
+def extract_date_from_filename(filename):
+    """Extract date from filename for sorting."""
+    match = re.search(r'(\d{4}-\d{2}-\d{2})', filename)
+    if match:
+        return datetime.strptime(match.group(1), '%Y-%m-%d')
+    return datetime.min
+
+def cleanup_old_news_files():
+    """Remove news files older than 30 days."""
+    news_dir = Path(output_folder)
+    if not news_dir.exists():
+        return
+    
+    cutoff_date = now - timedelta(days=30)
+    removed_files = []
+    
+    for file in news_dir.glob('*.json'):
+        if file.name == 'index.json':
+            continue
+            
+        file_date = extract_date_from_filename(file.name)
+        if file_date != datetime.min and file_date.date() < cutoff_date.date():
+            file.unlink()
+            removed_files.append(file.name)
+    
+    if removed_files:
+        print(f"Removed {len(removed_files)} old news files (older than 30 days)")
+
+def update_index_json():
+    """Update index.json with current news files."""
+    news_dir = Path(output_folder)
+    
+    if not news_dir.exists():
+        return
+    
+    # Find all JSON files (excluding index.json)
+    json_files = []
+    for file in news_dir.glob('*.json'):
+        if file.name != 'index.json':
+            json_files.append(file.name)
+    
+    # Sort by date (newest first)
+    json_files.sort(key=extract_date_from_filename, reverse=True)
+    
+    # Create index data with metadata
+    index_data = {
+        "last_updated": now.isoformat(),
+        "total_files": len(json_files),
+        "files": json_files
+    }
+    
+    # Write to root directory
+    with open('index.json', 'w', encoding='utf-8') as f:
+        json.dump(index_data, f, indent=2, ensure_ascii=False)
+    
+    print(f"Updated index.json with {len(json_files)} news files")
+
 # Simplified request without tool handling - using built-in live search
 response = requests.post(API_URL, headers=headers, data=json.dumps(payload))
 
@@ -98,5 +156,10 @@ else:
             print("\nCitations:")
             for i, citation in enumerate(citations, 1):
                 print(f"{i}. {citation}")
+        
+        # Clean up old files and update index
+        cleanup_old_news_files()
+        update_index_json()
+        
     else:
         print("No choices in response")
