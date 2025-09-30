@@ -2,7 +2,7 @@ import requests
 import json
 import os
 from datetime import datetime, timedelta, timezone
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 # load_dotenv()  # Load environment variables from .env file
 
