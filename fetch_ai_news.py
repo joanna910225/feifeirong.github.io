@@ -4,7 +4,7 @@ import os
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 
-load_dotenv()  # Load environment variables from .env file
+# load_dotenv()  # Load environment variables from .env file
 
 # API details (get your key from https://x.ai/api)
 API_URL = "https://api.x.ai/v1/chat/completions"  # Adjust if different
