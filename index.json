@@ -1,7 +1,8 @@
 {
-  "last_updated": "2025-10-10T09:36:14.030353+00:00",
-  "total_files": 12,
+  "last_updated": "2025-10-13T09:38:19.314124+00:00",
+  "total_files": 13,
   "files": [
+    "grok_news_summary_2025-10-13_09-38-19.json",
     "grok_news_summary_2025-10-10_09-36-14.json",
     "grok_news_summary_2025-10-09_09-36-25.json",
     "grok_news_summary_2025-10-08_09-36-49.json",
