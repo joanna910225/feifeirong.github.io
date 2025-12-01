@@ -90,7 +90,7 @@
             background: #1a1a1a;
         }
         .news-content.expanded { 
-            max-height: 2000px; 
+            max-height: none; 
             padding: 25px; 
         }
         .news-content p { 
@@ -365,6 +365,9 @@
                     const dateB = extractDateFromFilename(b);
                     return dateB - dateA;
                 });
+                
+                // Limit to most recent 14 files
+                newsFiles = newsFiles.slice(0, 14);
                 
                 // Load and display each news file
                 const newsBlocks = [];
