@@ -1,7 +1,8 @@
 {
-  "last_updated": "2025-12-16T09:40:24.995692+00:00",
+  "last_updated": "2025-12-17T09:41:03.998130+00:00",
   "total_files": 26,
   "files": [
+    "grok_news_summary_2025-12-17_09-41-03.json",
     "grok_news_summary_2025-12-16_09-40-24.json",
     "grok_news_summary_2025-12-15_09-44-10.json",
     "grok_news_summary_2025-12-14_09-36-07.json",
@@ -26,7 +27,6 @@
     "grok_news_summary_2025-11-20_09-37-37.json",
     "grok_news_summary_2025-11-19_09-38-02.json",
     "grok_news_summary_2025-11-18_09-38-11.json",
-    "grok_news_summary_2025-11-17_09-39-20.json",
-    "grok_news_summary_2025-11-16_09-35-24.json"
+    "grok_news_summary_2025-11-17_09-39-20.json"
   ]
 }
