@@ -4,12 +4,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import BlogCard from '../../components/BlogCard.astro';
 import zh from '../../i18n/zh.json';
+import { localePath } from '../../data/site';
 const posts = (await getCollection('blog', ({ data }) => data.lang === 'zh' && !data.draft)).sort((a,b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 2);
 const projects = (await getCollection('projects', ({ data }) => data.lang === 'zh')).sort((a,b) => a.data.order - b.data.order).slice(0, 2);
 ---
 <BaseLayout locale="zh" title={zh.nav.home}>
-  <section class="hero"><div class="hero-copy"><div class="eyebrow">{zh.hero.eyebrow}</div><h1>{zh.hero.title}<span class="cursor">_</span></h1><p>{zh.hero.body}</p><div class="hero-actions"><a class="button primary" href="/zh/blog/">{zh.hero.blog}</a><a class="button" href="/zh/projects/">{zh.hero.projects}</a></div><a class="quiet-link" href="/zh/news/">{zh.hero.news} →</a></div></section>
-  <section class="section"><div class="section-heading"><h2>{zh.sections.latestPosts}</h2><a href="/zh/blog/">{zh.sections.allPosts} →</a></div><div class="blog-list">{posts.map((post) => <BlogCard post={post} locale="zh" />)}</div></section>
-  <section class="section"><div class="section-heading"><h2>{zh.sections.selectedProjects}</h2><a href="/zh/projects/">{zh.sections.allProjects} →</a></div><div class="grid project-grid">{projects.map((project) => <ProjectCard project={project} locale="zh" />)}</div></section>
+  <section class="hero"><div class="hero-copy"><div class="eyebrow">{zh.hero.eyebrow}</div><h1>{zh.hero.title}<span class="cursor">_</span></h1><p>{zh.hero.body}</p><div class="hero-actions"><a class="button primary" href={localePath('zh', 'blog')}>{zh.hero.blog}</a><a class="button" href={localePath('zh', 'projects')}>{zh.hero.projects}</a></div><a class="quiet-link" href={localePath('zh', 'news')}>{zh.hero.news} →</a></div></section>
+  <section class="section"><div class="section-heading"><h2>{zh.sections.latestPosts}</h2><a href={localePath('zh', 'blog')}>{zh.sections.allPosts} →</a></div><div class="blog-list">{posts.map((post) => <BlogCard post={post} locale="zh" />)}</div></section>
+  <section class="section"><div class="section-heading"><h2>{zh.sections.selectedProjects}</h2><a href={localePath('zh', 'projects')}>{zh.sections.allProjects} →</a></div><div class="grid project-grid">{projects.map((project) => <ProjectCard project={project} locale="zh" />)}</div></section>
   <section class="section"><div class="now-line"><span>{zh.sections.now}</span><p>{zh.sections.nowBody}</p></div></section>
 </BaseLayout>

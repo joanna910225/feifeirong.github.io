@@ -1,7 +1,12 @@
-export const localePath = (locale: 'en' | 'zh', path = '') => {
-  const clean = path.replace(/^\//, '');
-  return locale === 'en' ? `/en${clean ? `/${clean}` : ''}` : `/zh${clean ? `/${clean}` : ''}`;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+export const withBase = (path = '') => {
+  const clean = path.replace(/^\/+|\/+$/g, '');
+  return `${base}/${clean}${clean ? '/' : ''}`;
 };
+
+export const localePath = (locale: 'en' | 'zh', path = '') =>
+  withBase(`${locale}${path ? `/${path.replace(/^\/+|\/+$/g, '')}` : ''}`);
 
 export const formatDate = (date: Date, locale: 'en' | 'zh') =>
   new Intl.DateTimeFormat(locale === 'zh' ? 'zh-CN' : 'en-US', {

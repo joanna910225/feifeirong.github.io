@@ -3,7 +3,7 @@ import '../styles/global.css';
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
 import en from '../i18n/en.json';
 import zh from '../i18n/zh.json';
-import { localePath } from '../data/site';
+import { localePath, withBase } from '../data/site';
 
 interface Props { title?: string; description?: string; locale: 'en' | 'zh'; path?: string; }
 const { title, description, locale, path = '' } = Astro.props;
@@ -23,7 +23,7 @@ const pageTitle = title ? `${title} — ${ui.siteName}` : ui.siteName;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description ?? ui.siteTag} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={withBase('favicon.svg')} />
     <title>{pageTitle}</title>
   </head>
   <body>
