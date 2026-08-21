@@ -6,12 +6,12 @@ import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-# API details (get your key from https://console.x.ai)
-# Live Search (search_parameters) was deprecated by xAI -> replaced by the
-# web_search server-side tool on the Responses API.
-API_URL = "https://api.x.ai/v1/responses"
-API_KEY = os.getenv("XAI_API_KEY")
-MODEL = "grok-4.6"
+# API details: route Grok through the OpenCode Go subscription.
+# Grok 4.5 is served via the Go gateway (https://opencode.ai/docs/go).
+# Uses the OpenAI Responses API format; web search via the web_search tool.
+API_URL = "https://opencode.ai/zen/go/v1/responses"
+API_KEY = os.getenv("OPENCODE_GO_API_KEY")
+MODEL = "grok-4.5"
 
 # Dynamic date for 24h ago
 now = datetime.now(timezone.utc)
