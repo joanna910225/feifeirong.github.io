@@ -1,0 +1,15 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../data/site';
+import en from '../i18n/en.json';
+import zh from '../i18n/zh.json';
+interface Props { post: CollectionEntry<'blog'>; locale: 'en' | 'zh'; }
+const { post, locale } = Astro.props;
+const ui = locale === 'zh' ? zh : en;
+---
+<article class="blog-card">
+  <div class="card-kicker"><span>{post.data.category ?? 'Notes'}</span><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, locale)}</time></div>
+  <h3><a href={`/${locale}/blog/${post.slug}/`}>{post.data.title}</a></h3>
+  <p>{post.data.description}</p>
+  <a class="text-link" href={`/${locale}/blog/${post.slug}/`}>{ui.blog.read} →</a>
+</article>

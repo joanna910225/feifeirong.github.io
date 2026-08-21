@@ -1,0 +1,6 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NewsFeed from '../../components/NewsFeed.astro';
+import zh from '../../i18n/zh.json';
+---
+<BaseLayout locale="zh" path="news" title={zh.news.title} description={zh.news.intro}><div class="page-header"><div class="eyebrow">~/news</div><h1>{zh.news.title}</h1><p>{zh.news.intro}</p></div><NewsFeed locale="zh" /></BaseLayout>

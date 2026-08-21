@@ -46,3 +46,6 @@ wheels/
 .Trashes
 ehthumbs.db
 Thumbs.db
+# Astro generated files
+.astro/
+node_modules/

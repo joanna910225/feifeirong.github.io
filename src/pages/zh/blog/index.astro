@@ -1,0 +1,8 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BlogCard from '../../../components/BlogCard.astro';
+import zh from '../../../i18n/zh.json';
+const posts = (await getCollection('blog', ({ data }) => data.lang === 'zh' && !data.draft)).sort((a,b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<BaseLayout locale="zh" path="blog" title={zh.blog.title} description={zh.blog.intro}><div class="page-header"><div class="eyebrow">~/notes</div><h1>{zh.blog.title}</h1><p>{zh.blog.intro}</p></div><div class="blog-list">{posts.map((post) => <BlogCard post={post} locale="zh" />)}</div></BaseLayout>

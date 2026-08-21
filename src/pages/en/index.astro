@@ -1,0 +1,23 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import en from '../../i18n/en.json';
+const posts = (await getCollection('blog', ({ data }) => data.lang === 'en' && !data.draft)).sort((a,b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 2);
+const projects = (await getCollection('projects', ({ data }) => data.lang === 'en')).sort((a,b) => a.data.order - b.data.order).slice(0, 2);
+---
+<BaseLayout locale="en" title={en.nav.home}>
+  <section class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow">{en.hero.eyebrow}</div>
+      <h1>{en.hero.title}<span class="cursor">_</span></h1>
+      <p>{en.hero.body}</p>
+      <div class="hero-actions"><a class="button primary" href="/en/blog/">{en.hero.blog}</a><a class="button" href="/en/projects/">{en.hero.projects}</a></div>
+      <a class="quiet-link" href="/en/news/">{en.hero.news} →</a>
+    </div>
+  </section>
+  <section class="section"><div class="section-heading"><h2>{en.sections.latestPosts}</h2><a href="/en/blog/">{en.sections.allPosts} →</a></div><div class="blog-list">{posts.map((post) => <BlogCard post={post} locale="en" />)}</div></section>
+  <section class="section"><div class="section-heading"><h2>{en.sections.selectedProjects}</h2><a href="/en/projects/">{en.sections.allProjects} →</a></div><div class="grid project-grid">{projects.map((project) => <ProjectCard project={project} locale="en" />)}</div></section>
+  <section class="section"><div class="now-line"><span>{en.sections.now}</span><p>{en.sections.nowBody}</p></div></section>
+</BaseLayout>

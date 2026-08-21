@@ -1,0 +1,42 @@
+---
+import '../styles/global.css';
+import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+import en from '../i18n/en.json';
+import zh from '../i18n/zh.json';
+import { localePath } from '../data/site';
+
+interface Props { title?: string; description?: string; locale: 'en' | 'zh'; path?: string; }
+const { title, description, locale, path = '' } = Astro.props;
+const ui = locale === 'zh' ? zh : en;
+const nav = [
+  { key: 'home', href: localePath(locale, 'blog') },
+  { key: 'news', href: localePath(locale, 'news') },
+  { key: 'projects', href: localePath(locale, 'projects') },
+  { key: 'about', href: localePath(locale, 'about') },
+];
+const alternatePath = locale === 'en' ? localePath('zh', path) : localePath('en', path);
+const pageTitle = title ? `${title} — ${ui.siteName}` : ui.siteName;
+---
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description ?? ui.siteTag} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="site-header">
+        <a class="brand" href={localePath(locale)} aria-label={ui.siteName}><span class="brand-mark">&gt;_</span> {ui.siteName}</a>
+        <nav aria-label="Main navigation">
+          {nav.map((item) => <a href={item.href} class:list={{active: Astro.url.pathname === item.href || Astro.url.pathname === `${item.href}/` || Astro.url.pathname.startsWith(`${item.href}/`)}}>{ui.nav[item.key as keyof typeof ui.nav]}</a>)}
+        </nav>
+        <LanguageSwitcher locale={locale} href={alternatePath} label={ui.language} />
+      </header>
+      <main><slot /></main>
+      <footer class="site-footer"><span>© {new Date().getFullYear()} Feifei Rong</span><span>{ui.footer.built}</span></footer>
+    </div>
+  </body>
+</html>
