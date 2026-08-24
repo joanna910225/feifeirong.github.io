@@ -16,7 +16,6 @@ MODEL = "grok-4.5"
 ROOT = Path(__file__).resolve().parent
 OUTPUT_FOLDER = ROOT / "public" / "news"
 OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
-NEWS_RETENTION_DAYS = 30
 
 # OpenCode Go Grok 4.5 rates (USD per 1M tokens). Web-search pricing uses
 # xAI's published $5 / 1K calls because OpenCode does not expose a billed-cost
@@ -197,18 +196,6 @@ def newest_briefing_time() -> datetime | None:
     return max(timestamps) if timestamps else None
 
 
-def prune_old_news(reference: datetime) -> int:
-    cutoff_date = (reference.astimezone(timezone.utc) - timedelta(days=NEWS_RETENTION_DAYS)).date()
-    removed = 0
-    for file_path in OUTPUT_FOLDER.glob("*.json"):
-        if extract_date_from_filename(file_path.name).date() < cutoff_date:
-            file_path.unlink()
-            removed += 1
-    if removed:
-        print(f"Removed {removed} briefing files older than {NEWS_RETENTION_DAYS} days")
-    return removed
-
-
 def collect_response_text_and_citations(result: dict) -> tuple[str, list[str]]:
     text_parts: list[str] = []
     citations: list[str] = []
@@ -357,15 +344,12 @@ def main() -> None:
 
     now = datetime.now(timezone.utc)
     previous_briefing_time = newest_briefing_time()
-    pruned_files = prune_old_news(now)
     force = os.getenv("FORCE_GENERATE", "").lower() in {"1", "true", "yes"}
     recent_age = (
         (now - previous_briefing_time).total_seconds() / 3600
         if previous_briefing_time is not None else None
     )
     if not force and recent_age is not None and recent_age < 20:
-        if pruned_files:
-            update_index_json(now)
         print(f"Skipping generation: newest briefing is only {recent_age:.2f} hours old")
         return
 
