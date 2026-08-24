@@ -10,6 +10,14 @@ on:
         required: false
         default: false
         type: boolean
+      coverage_start_utc:
+        description: Optional UTC start time, for example 2026-08-21T01:00:00Z
+        required: false
+        type: string
+      coverage_end_utc:
+        description: Optional UTC cutoff time, for example 2026-08-24T01:00:00Z
+        required: false
+        type: string
 
 concurrency:
   group: daily-ai-news
@@ -39,6 +47,8 @@ jobs:
         env:
           OPENCODE_GO_API_KEY: ${{ secrets.OPENCODE_GO_API_KEY }}
           FORCE_GENERATE: ${{ inputs.force || 'false' }}
+          COVERAGE_START_UTC: ${{ inputs.coverage_start_utc || '' }}
+          COVERAGE_END_UTC: ${{ inputs.coverage_end_utc || '' }}
 
       - name: Commit and push changes
         run: |

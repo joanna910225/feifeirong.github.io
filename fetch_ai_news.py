@@ -38,7 +38,7 @@ Allocate attention approximately as follows:
 5. AI leader and industry watch — 10%
 
 TIME AND SELECTION RULES
-- Use UTC for inclusion decisions. The supplied start time is the completion time of the previous briefing, and the supplied end time is the current generation time.
+- Use UTC for inclusion decisions. The supplied start time is normally the completion time of the previous briefing. The supplied end time is the requested news cutoff, normally the current generation time.
 - Include only items first announced or materially updated at or after START_UTC and at or before END_UTC. This reporting period may be roughly 48 or 72 hours because the briefing normally publishes on Monday, Wednesday, and Friday.
 - HARD BOUNDARY: never include an event from before START_UTC—not as context, a trend, a leader update, or a section filler. An empty section is better than old news.
 - Do not expand or “fall back” beyond START_UTC. Exclude month-only or undated items unless a primary source proves that the event falls inside the supplied reporting period. Do not use an old event merely because its article or tracker page was updated recently.
@@ -170,6 +170,16 @@ def utc_iso(value: datetime) -> str:
     return value.astimezone(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
 
 
+def optional_utc_env(name: str) -> datetime | None:
+    raw = os.getenv(name, "").strip()
+    if not raw:
+        return None
+    parsed = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        raise ValueError(f"{name} must include a UTC offset or Z suffix")
+    return parsed.astimezone(timezone.utc)
+
+
 def extract_date_from_filename(filename: str) -> datetime:
     match = re.search(r"(\d{4}-\d{2}-\d{2})", filename)
     return datetime.strptime(match.group(1), "%Y-%m-%d") if match else datetime.min
@@ -288,16 +298,19 @@ def usage_metrics(result: dict, duration_seconds: float) -> dict:
     }
 
 
-def request_bilingual_summary(window_start: datetime, window_end: datetime) -> tuple[str, str, list[str], dict]:
+def request_bilingual_summary(
+    window_start: datetime, window_end: datetime, generated_at: datetime
+) -> tuple[str, str, list[str], dict]:
     start_utc = utc_iso(window_start)
     end_utc = utc_iso(window_end)
+    generated_at_utc = utc_iso(generated_at)
     report_date = window_end.strftime("%Y-%m-%d")
     user_prompt = f"""Research and produce the bilingual AI Intelligence Briefing for {report_date}.
 
 Reporting period since the previous briefing:
 - Start: {start_utc}
 - End: {end_utc}
-- Generated at: {end_utc}
+- Generated at: {generated_at_utc}
 
 The start time is the completion time of the previous briefing. Include nothing announced before it. Model releases and major model updates are the highest priority. Use web search extensively, verify dates against this exact UTC reporting period, prioritize primary sources, and return only the final bilingual briefing in the required <ENGLISH> and <CHINESE> structure. Replace REPORT_DATE, START_UTC, END_UTC, and GENERATED_AT_UTC with the exact values above."""
     payload = {
@@ -342,26 +355,39 @@ def main() -> None:
         print("Error: OPENCODE_GO_API_KEY environment variable is not set")
         sys.exit(1)
 
-    now = datetime.now(timezone.utc)
+    generated_at = datetime.now(timezone.utc)
+    try:
+        requested_start = optional_utc_env("COVERAGE_START_UTC")
+        requested_end = optional_utc_env("COVERAGE_END_UTC")
+    except ValueError as exc:
+        print(f"Error: {exc}")
+        sys.exit(1)
+
     previous_briefing_time = newest_briefing_time()
     force = os.getenv("FORCE_GENERATE", "").lower() in {"1", "true", "yes"}
     recent_age = (
-        (now - previous_briefing_time).total_seconds() / 3600
+        (generated_at - previous_briefing_time).total_seconds() / 3600
         if previous_briefing_time is not None else None
     )
     if not force and recent_age is not None and recent_age < 20:
         print(f"Skipping generation: newest briefing is only {recent_age:.2f} hours old")
         return
 
-    window_start = previous_briefing_time or (now - timedelta(hours=24))
-    if window_start >= now:
-        print(f"Error: previous briefing time {utc_iso(window_start)} is not before current time {utc_iso(now)}")
+    window_end = requested_end or generated_at
+    window_start = requested_start or previous_briefing_time or (window_end - timedelta(hours=24))
+    if window_start >= window_end:
+        print(f"Error: coverage start {utc_iso(window_start)} is not before coverage end {utc_iso(window_end)}")
         sys.exit(1)
-    timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
+    if window_end > generated_at:
+        print(f"Error: coverage end {utc_iso(window_end)} is after generation time {utc_iso(generated_at)}")
+        sys.exit(1)
+    timestamp = generated_at.strftime("%Y-%m-%d_%H-%M-%S")
     output_file = OUTPUT_FOLDER / f"grok_news_summary_{timestamp}.json"
 
     try:
-        summary_en, summary_zh, citations, usage = request_bilingual_summary(window_start, now)
+        summary_en, summary_zh, citations, usage = request_bilingual_summary(
+            window_start, window_end, generated_at
+        )
     except Exception as exc:
         print(f"Error: {exc}")
         sys.exit(1)
@@ -371,7 +397,8 @@ def main() -> None:
             {
                 "timestamp": timestamp,
                 "coverage_start_utc": utc_iso(window_start),
-                "coverage_end_utc": utc_iso(now),
+                "coverage_end_utc": utc_iso(window_end),
+                "generated_at_utc": utc_iso(generated_at),
                 "summary": summary_en,
                 "summary_en": summary_en,
                 "summary_zh": summary_zh,
@@ -389,7 +416,7 @@ def main() -> None:
         f"{usage['input_tokens']} input + {usage['output_tokens']} output = {usage['total_tokens']} total tokens; "
         f"{usage['web_search_calls'] if usage['web_search_calls'] is not None else 'unreported'} web searches; estimated ${usage['estimated_cost_usd']:.6f}"
     )
-    update_index_json(now)
+    update_index_json(generated_at)
 
 
 if __name__ == "__main__":
