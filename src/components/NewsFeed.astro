@@ -4,21 +4,69 @@ import path from 'node:path';
 import { marked } from 'marked';
 import en from '../i18n/en.json';
 import zh from '../i18n/zh.json';
+
 interface Props { locale: 'en' | 'zh'; }
+interface Usage {
+  input_tokens?: number;
+  output_tokens?: number;
+  total_tokens?: number;
+  cached_input_tokens?: number;
+  web_search_calls?: number;
+  duration_seconds?: number;
+  estimated_cost_usd?: number;
+  cost_is_estimate?: boolean;
+}
+
 const { locale } = Astro.props;
 const ui = locale === 'zh' ? zh : en;
 const publicDir = path.join(process.cwd(), 'public');
 let feed: { files?: string[] } = {};
 try { feed = JSON.parse(fs.readFileSync(path.join(publicDir, 'index.json'), 'utf8')); } catch {}
+
+const compactTokens = (value: number) => value >= 1000 ? `${(value / 1000).toFixed(value >= 10000 ? 1 : 2)}k` : String(value);
+const formatCost = (value: number) => value < 0.01 ? value.toFixed(4) : value.toFixed(3);
+
 const news = (feed.files ?? []).slice(0, 12).map((file) => {
   try {
     const data = JSON.parse(fs.readFileSync(path.join(publicDir, 'news', file), 'utf8'));
     const rawDate = data.timestamp?.slice(0, 10) ?? file.match(/\d{4}-\d{2}-\d{2}/)?.[0];
     const summary = locale === 'zh' ? (data.summary_zh ?? data.summary ?? data.summary_en ?? '') : (data.summary_en ?? data.summary ?? '');
-    return { file, date: rawDate ? new Date(rawDate) : new Date(), timestamp: data.timestamp, summary, citations: data.citations ?? [], html: marked.parse(summary) as string };
+    const usage: Usage = data.usage ?? {};
+    const cost = Number(usage.estimated_cost_usd);
+    const totalTokens = Number(usage.total_tokens);
+    const hasUsage = Number.isFinite(cost) && cost > 0;
+    const usageLabel = hasUsage
+      ? `${usage.cost_is_estimate === false ? '' : '≈ '}$${formatCost(cost)}${Number.isFinite(totalTokens) && totalTokens > 0 ? ` · ${compactTokens(totalTokens)} tok` : ''}`
+      : '';
+    const usageTitle = hasUsage
+      ? (locale === 'zh'
+        ? `生成成本估算：$${cost.toFixed(6)}；输入 ${usage.input_tokens ?? 0} tokens；输出 ${usage.output_tokens ?? 0} tokens；Web 搜索 ${usage.web_search_calls ?? 0} 次；耗时 ${usage.duration_seconds ?? 0} 秒`
+        : `Estimated generation cost: $${cost.toFixed(6)}; ${usage.input_tokens ?? 0} input tokens; ${usage.output_tokens ?? 0} output tokens; ${usage.web_search_calls ?? 0} web searches; ${usage.duration_seconds ?? 0}s`)
+      : '';
+    return {
+      file,
+      date: rawDate ? new Date(rawDate) : new Date(),
+      timestamp: data.timestamp,
+      summary,
+      citations: data.citations ?? [],
+      html: marked.parse(summary) as string,
+      usageLabel,
+      usageTitle,
+    };
   } catch { return null; }
 }).filter((item): item is NonNullable<typeof item> => Boolean(item));
 ---
 <div class="news-feed">
-  {news.length === 0 ? <p class="muted">{ui.news.empty}</p> : news.map((item) => <details class="news-entry"><summary><span class="news-date">{item.timestamp ?? item.date.toISOString().slice(0, 10)}</span><span class="news-summary-title">{item.summary.split('\n')[0].replace(/[*#]/g, '').slice(0, 90)}</span><span class="chevron">+</span></summary><div class="news-content" set:html={item.html}></div>{item.citations.length > 0 && <div class="citations">{item.citations.map((url: string) => <a href={url} target="_blank" rel="noreferrer">source ↗</a>)}</div>}</details>)}
+  {news.length === 0 ? <p class="muted">{ui.news.empty}</p> : news.map((item) =>
+    <details class="news-entry">
+      <summary>
+        <span class="news-date">{item.timestamp ?? item.date.toISOString().slice(0, 10)}</span>
+        <span class="news-summary-title">{item.summary.split('\n')[0].replace(/[*#]/g, '').slice(0, 90)}</span>
+        {item.usageLabel && <span class="news-usage" title={item.usageTitle}>{item.usageLabel}</span>}
+        <span class="chevron">+</span>
+      </summary>
+      <div class="news-content" set:html={item.html}></div>
+      {item.citations.length > 0 && <div class="citations">{item.citations.map((url: string) => <a href={url} target="_blank" rel="noreferrer">source ↗</a>)}</div>}
+    </details>
+  )}
 </div>
