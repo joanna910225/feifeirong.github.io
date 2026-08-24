@@ -2,7 +2,7 @@ name: Daily AI News Update
 
 on:
   schedule:
-    - cron: '30 9 * * *'
+    - cron: '30 9 * * 1,3,5'  # Mon/Wed/Fri at 17:30 Asia/Shanghai (09:30 UTC)
   workflow_dispatch:
     inputs:
       force:
