@@ -39,11 +39,10 @@ Allocate attention approximately as follows:
 5. AI leader and industry watch — 10%
 
 TIME AND SELECTION RULES
-- Use UTC for inclusion decisions. Never include an event after the supplied end time.
-- Prefer items first announced or materially updated in the primary 24-hour window.
-- If a section is sparse, expand that section first to 72 hours, then to at most 7 days. Label every additional item with its actual date and “Outside the primary 24-hour window.”
-- HARD RECENCY CUTOFF: never include an event more than 7 × 24 hours before the supplied end time—not as context, a trend, a leader update, or a section filler. An empty section is better than old news.
-- Exclude month-only or undated items unless a primary source proves that the event falls within the 7-day cutoff. Do not use an old event merely because its article or tracker page was updated recently.
+- Use UTC for inclusion decisions. The supplied start time is the completion time of the previous briefing, and the supplied end time is the current generation time.
+- Include only items first announced or materially updated at or after START_UTC and at or before END_UTC. This reporting period may be roughly 48 or 72 hours because the briefing normally publishes on Monday, Wednesday, and Friday.
+- HARD BOUNDARY: never include an event from before START_UTC—not as context, a trend, a leader update, or a section filler. An empty section is better than old news.
+- Do not expand or “fall back” beyond START_UTC. Exclude month-only or undated items unless a primary source proves that the event falls inside the supplied reporting period. Do not use an old event merely because its article or tracker page was updated recently.
 - Do not pad sections with stale or low-value items.
 - Search each section independently. Rank by recency, primary-source evidence, impact, novelty, and relevance to AI builders and researchers.
 - Identify the original announcement date and distinguish releases from previews, rumors, benchmarks, pricing/API updates, partnerships, and recycled announcements.
@@ -60,10 +59,10 @@ NEWSROOM VOICE AND READABILITY
 - Translate technical significance into plain language without sacrificing accuracy. Briefly explain specialized terms at first mention when a non-specialist might not know them.
 - Keep table cells scannable. Use one concrete idea per sentence, put the most newsworthy point first, and remove throat-clearing, repeated caveats, and process narration.
 - Use neutral, confident wording supported by evidence. Avoid hype, clichés, vague claims such as “revolutionary,” and robotic phrases such as “execution signal,” “tracking ledger,” or “fallback item.”
-- Do not repeatedly describe the search procedure or coverage window in the body. Put data gaps, verification limits, and expanded-date coverage once in Editorial Notes / 信息说明.
+- Do not repeatedly describe the search procedure or reporting period in the body. Put data gaps and verification limits once in Editorial Notes / 信息说明.
 - English should sound like a concise professional technology newsletter, not a literal research report.
 - Simplified Chinese must be idiomatic, conversational, and easy to understand. It must read as originally written in Chinese rather than translated sentence by sentence from English.
-- In Chinese, avoid bureaucratic or literal translations such as “情报简报、执行信号、台账、回退项、时间窗口、追踪器、追踪榜、检查点、SKU、服务层、产业观察”. Prefer natural alternatives such as “AI 科技简报、今日看点、汇总/发布记录、补充收录的近期消息、过去24小时/统计时段、近期发布情况、模型版本、产品版本、API 服务、行业动态”.
+- In Chinese, avoid bureaucratic or literal translations such as “情报简报、执行信号、台账、回退项、时间窗口、追踪器、追踪榜、检查点、SKU、服务层、产业观察”. Prefer natural alternatives such as “AI 科技简报、今日看点、汇总/发布记录、本期统计时段、近期发布情况、模型版本、产品版本、API 服务、行业动态”.
 - In Chinese, prefer “为什么值得关注” or a direct benefit over abstract wording. Explain unavoidable English acronyms or technical terms on first use.
 
 SECTION REQUIREMENTS
@@ -76,7 +75,7 @@ For each item include exact date, model and organization, status (Released / Pre
 Prioritize novel or high-impact work in language models, multimodal learning, agents, robotics, vision, speech, safety, interpretability, evaluation, inference, and AI systems. Include date, exact title, authors/affiliations when available, contribution, why it matters, evidence status (preprint / accepted / peer reviewed / company study), paper link, and code/project link. Do not claim SOTA unless supported by a comparable evaluation.
 
 3. NEW AND FAST-GROWING GITHUB/HUGGING FACE PROJECTS
-Prioritize projects created, publicly released, or substantially updated in the last 7 days with observable developer momentum. Include project, maintainer, date, purpose, reason for attention, license/language/deployment notes, directly verified stars/downloads with UTC check time, and official link. Do not call an old repository new or invent historical star growth.
+Prioritize projects created, publicly released, or substantially updated inside the supplied reporting period with observable developer momentum. Include project, maintainer, date, purpose, reason for attention, license/language/deployment notes, directly verified stars/downloads with UTC check time, and official link. Do not call an old repository new or invent historical star growth.
 
 4. NEW AI PRODUCTS AND STARTUPS
 Search Product Hunt, Y Combinator Launch/company/batch pages, official product sites, changelogs, and credible reporting. Prioritize working AI-native launches and material updates. Include product/company, launch date, Product Hunt or YC status, target user/problem, differentiation, verified availability/pricing, and official plus Product Hunt/YC links. Treat promotional claims as claims, not facts.
@@ -129,7 +128,7 @@ Up to 6 verified material developments.
 At most 3 items; omit if empty.
 
 ## Editorial Notes
-Disclose fallback windows, unverified claims, and important coverage limitations.
+Disclose unverified claims and important coverage limitations. Confirm that no items before START_UTC were included.
 </ENGLISH>
 
 <CHINESE>
@@ -143,7 +142,7 @@ Disclose fallback windows, unverified claims, and important coverage limitations
 ## 1. 模型发布与更新
 最多8项，使用与英文版相同内容和顺序的紧凑Markdown表格：
 | 日期 | 模型 / 公司 | 发布状态 | 有哪些更新 | 为什么值得关注 | 来源 |
-如无合格项目，直接写“过去24小时没有发现经过核实、值得收录的模型发布。”
+如无合格项目，直接写“本期统计时段内没有发现经过核实、值得收录的模型发布。”
 
 ## 2. 最新 AI 论文与研究
 最多8项：
@@ -164,7 +163,7 @@ Disclose fallback windows, unverified claims, and important coverage limitations
 最多3条；没有合格内容时省略本节。
 
 ## 信息说明
-集中说明补充收录的近期消息、尚未核实的说法和重要的数据限制。不要在正文中反复解释检索过程。
+集中说明尚未核实的说法和重要的数据限制，并确认没有收录 START_UTC 以前的消息。不要在正文中反复解释检索过程。
 </CHINESE>"""
 
 
@@ -177,19 +176,25 @@ def extract_date_from_filename(filename: str) -> datetime:
     return datetime.strptime(match.group(1), "%Y-%m-%d") if match else datetime.min
 
 
-def newest_news_age_hours(reference: datetime) -> float | None:
+def newest_briefing_time() -> datetime | None:
     timestamps = []
     for file_path in OUTPUT_FOLDER.glob("*.json"):
         try:
             data = json.loads(file_path.read_text(encoding="utf-8"))
-            raw = data.get("timestamp")
-            if raw:
-                timestamps.append(datetime.strptime(raw, "%Y-%m-%d_%H-%M-%S").replace(tzinfo=timezone.utc))
+            coverage_end = data.get("coverage_end_utc")
+            if coverage_end:
+                timestamps.append(
+                    datetime.fromisoformat(coverage_end.replace("Z", "+00:00")).astimezone(timezone.utc)
+                )
+                continue
+            timestamp = data.get("timestamp")
+            if timestamp:
+                timestamps.append(
+                    datetime.strptime(timestamp, "%Y-%m-%d_%H-%M-%S").replace(tzinfo=timezone.utc)
+                )
         except (OSError, ValueError, TypeError, json.JSONDecodeError):
             continue
-    if not timestamps:
-        return None
-    return (reference - max(timestamps)).total_seconds() / 3600
+    return max(timestamps) if timestamps else None
 
 
 def prune_old_news(reference: datetime) -> int:
@@ -302,12 +307,12 @@ def request_bilingual_summary(window_start: datetime, window_end: datetime) -> t
     report_date = window_end.strftime("%Y-%m-%d")
     user_prompt = f"""Research and produce the bilingual AI Intelligence Briefing for {report_date}.
 
-Primary coverage window:
+Reporting period since the previous briefing:
 - Start: {start_utc}
 - End: {end_utc}
 - Generated at: {end_utc}
 
-Model releases and major model updates are the highest priority. Use web search extensively, verify dates against the UTC window, prioritize primary sources, and return only the final bilingual briefing in the required <ENGLISH> and <CHINESE> structure. Replace REPORT_DATE, START_UTC, END_UTC, and GENERATED_AT_UTC with the exact values above."""
+The start time is the completion time of the previous briefing. Include nothing announced before it. Model releases and major model updates are the highest priority. Use web search extensively, verify dates against this exact UTC reporting period, prioritize primary sources, and return only the final bilingual briefing in the required <ENGLISH> and <CHINESE> structure. Replace REPORT_DATE, START_UTC, END_UTC, and GENERATED_AT_UTC with the exact values above."""
     payload = {
         "model": MODEL,
         "input": [
@@ -351,16 +356,23 @@ def main() -> None:
         sys.exit(1)
 
     now = datetime.now(timezone.utc)
+    previous_briefing_time = newest_briefing_time()
     pruned_files = prune_old_news(now)
     force = os.getenv("FORCE_GENERATE", "").lower() in {"1", "true", "yes"}
-    recent_age = newest_news_age_hours(now)
+    recent_age = (
+        (now - previous_briefing_time).total_seconds() / 3600
+        if previous_briefing_time is not None else None
+    )
     if not force and recent_age is not None and recent_age < 20:
         if pruned_files:
             update_index_json(now)
         print(f"Skipping generation: newest briefing is only {recent_age:.2f} hours old")
         return
 
-    window_start = now - timedelta(hours=24)
+    window_start = previous_briefing_time or (now - timedelta(hours=24))
+    if window_start >= now:
+        print(f"Error: previous briefing time {utc_iso(window_start)} is not before current time {utc_iso(now)}")
+        sys.exit(1)
     timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
     output_file = OUTPUT_FOLDER / f"grok_news_summary_{timestamp}.json"
 
