@@ -78,6 +78,7 @@ BILINGUAL OUTPUT RULES
 - Both editions must contain exactly the same selected items, in the same order, with identical dates, numbers, names, titles, certainty labels, and URLs.
 - Preserve model, product, repository, and paper names. Preserve paper titles in their original language in Chinese. Translate explanations and headings naturally.
 - Use Markdown and inline clickable source links. Do not output the search process, hidden reasoning, discarded candidates, a detached bibliography, or text outside the two tags.
+- In every table, keep the Date cell compact: use only YYYY-MM-DD, YYYY-MM, or a concise range such as YYYY-MM-DD–DD. Never put parenthetical source, status, or verification notes in the Date cell; move them to Status, Sources, or Editorial Notes.
 
 Return exactly this structure:
 

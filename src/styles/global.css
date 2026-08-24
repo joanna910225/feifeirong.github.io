@@ -110,7 +110,7 @@ main { flex: 1; padding: 72px 0 100px; }
 .news-content h1 { font-size: 1.2rem; }
 .news-content table { width: 100%; min-width: 1320px; border-collapse: collapse; table-layout: fixed; }
 .news-content th, .news-content td { border-bottom: 1px solid var(--line); padding: 10px 12px; text-align: left; vertical-align: top; overflow-wrap: break-word; }
-.news-content th:nth-child(1), .news-content td:nth-child(1) { width: 100px; white-space: nowrap; }
+.news-content th:nth-child(1), .news-content td:nth-child(1) { width: 100px; white-space: normal; overflow-wrap: anywhere; font-family: var(--font-mono); font-size: .72rem; line-height: 1.4; }
 .news-content th:nth-child(2), .news-content td:nth-child(2) { width: 260px; }
 .news-content th:nth-child(3), .news-content td:nth-child(3) { width: 180px; }
 .news-content th:nth-child(4), .news-content td:nth-child(4),
