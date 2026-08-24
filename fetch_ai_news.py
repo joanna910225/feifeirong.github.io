@@ -16,6 +16,7 @@ MODEL = "grok-4.5"
 ROOT = Path(__file__).resolve().parent
 OUTPUT_FOLDER = ROOT / "public" / "news"
 OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
+NEWS_RETENTION_DAYS = 30
 
 # OpenCode Go Grok 4.5 rates (USD per 1M tokens). Web-search pricing uses
 # xAI's published $5 / 1K calls because OpenCode does not expose a billed-cost
@@ -40,7 +41,9 @@ Allocate attention approximately as follows:
 TIME AND SELECTION RULES
 - Use UTC for inclusion decisions. Never include an event after the supplied end time.
 - Prefer items first announced or materially updated in the primary 24-hour window.
-- If a section is sparse, expand that section first to 72 hours, then to 7 days. Label every fallback item with its actual date and “Outside the primary 24-hour window.”
+- If a section is sparse, expand that section first to 72 hours, then to at most 7 days. Label every additional item with its actual date and “Outside the primary 24-hour window.”
+- HARD RECENCY CUTOFF: never include an event more than 7 × 24 hours before the supplied end time—not as context, a trend, a leader update, or a section filler. An empty section is better than old news.
+- Exclude month-only or undated items unless a primary source proves that the event falls within the 7-day cutoff. Do not use an old event merely because its article or tracker page was updated recently.
 - Do not pad sections with stale or low-value items.
 - Search each section independently. Rank by recency, primary-source evidence, impact, novelty, and relevance to AI builders and researchers.
 - Identify the original announcement date and distinguish releases from previews, rumors, benchmarks, pricing/API updates, partnerships, and recycled announcements.
@@ -187,6 +190,18 @@ def newest_news_age_hours(reference: datetime) -> float | None:
     if not timestamps:
         return None
     return (reference - max(timestamps)).total_seconds() / 3600
+
+
+def prune_old_news(reference: datetime) -> int:
+    cutoff_date = (reference.astimezone(timezone.utc) - timedelta(days=NEWS_RETENTION_DAYS)).date()
+    removed = 0
+    for file_path in OUTPUT_FOLDER.glob("*.json"):
+        if extract_date_from_filename(file_path.name).date() < cutoff_date:
+            file_path.unlink()
+            removed += 1
+    if removed:
+        print(f"Removed {removed} briefing files older than {NEWS_RETENTION_DAYS} days")
+    return removed
 
 
 def collect_response_text_and_citations(result: dict) -> tuple[str, list[str]]:
@@ -336,9 +351,12 @@ def main() -> None:
         sys.exit(1)
 
     now = datetime.now(timezone.utc)
+    pruned_files = prune_old_news(now)
     force = os.getenv("FORCE_GENERATE", "").lower() in {"1", "true", "yes"}
     recent_age = newest_news_age_hours(now)
     if not force and recent_age is not None and recent_age < 20:
+        if pruned_files:
+            update_index_json(now)
         print(f"Skipping generation: newest briefing is only {recent_age:.2f} hours old")
         return
 
