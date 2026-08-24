@@ -15,6 +15,7 @@ interface Usage {
   duration_seconds?: number;
   estimated_cost_usd?: number;
   cost_is_estimate?: boolean;
+  cost_is_lower_bound?: boolean;
 }
 
 const { locale } = Astro.props;
@@ -36,12 +37,12 @@ const news = (feed.files ?? []).slice(0, 12).map((file) => {
     const totalTokens = Number(usage.total_tokens);
     const hasUsage = Number.isFinite(cost) && cost > 0;
     const usageLabel = hasUsage
-      ? `${usage.cost_is_estimate === false ? '' : '≈ '}$${formatCost(cost)}${Number.isFinite(totalTokens) && totalTokens > 0 ? ` · ${compactTokens(totalTokens)} tok` : ''}`
+      ? `${usage.cost_is_lower_bound ? '≥ ' : usage.cost_is_estimate === false ? '' : '≈ '}$${formatCost(cost)}${Number.isFinite(totalTokens) && totalTokens > 0 ? ` · ${compactTokens(totalTokens)} tok` : ''}`
       : '';
     const usageTitle = hasUsage
       ? (locale === 'zh'
-        ? `生成成本估算：$${cost.toFixed(6)}；输入 ${usage.input_tokens ?? 0} tokens；输出 ${usage.output_tokens ?? 0} tokens；Web 搜索 ${usage.web_search_calls ?? 0} 次；耗时 ${usage.duration_seconds ?? 0} 秒`
-        : `Estimated generation cost: $${cost.toFixed(6)}; ${usage.input_tokens ?? 0} input tokens; ${usage.output_tokens ?? 0} output tokens; ${usage.web_search_calls ?? 0} web searches; ${usage.duration_seconds ?? 0}s`)
+        ? `${usage.cost_is_lower_bound ? '生成成本下限' : '生成成本估算'}：$${cost.toFixed(6)}；输入 ${usage.input_tokens ?? 0} tokens；输出 ${usage.output_tokens ?? 0} tokens；Web 搜索 ${usage.web_search_calls ?? '供应商未报告'}；耗时 ${usage.duration_seconds ?? 0} 秒`
+        : `${usage.cost_is_lower_bound ? 'Generation cost lower bound' : 'Estimated generation cost'}: $${cost.toFixed(6)}; ${usage.input_tokens ?? 0} input tokens; ${usage.output_tokens ?? 0} output tokens; ${usage.web_search_calls ?? 'provider-unreported'} web searches; ${usage.duration_seconds ?? 0}s`)
       : '';
     return {
       file,

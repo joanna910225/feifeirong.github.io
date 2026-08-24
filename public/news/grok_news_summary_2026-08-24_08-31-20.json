@@ -13,10 +13,10 @@
     "output_tokens": 10790,
     "reasoning_tokens": 1077,
     "total_tokens": 27888,
-    "web_search_calls": 0,
+    "web_search_calls": null,
     "duration_seconds": 171.48,
     "estimated_token_cost_usd": 0.098501,
-    "estimated_web_search_cost_usd": 0.0,
+    "estimated_web_search_cost_usd": null,
     "estimated_cost_usd": 0.098501,
     "pricing": {
       "input_per_million": 2.0,
@@ -25,6 +25,7 @@
       "web_search_per_call": 0.005
     },
     "cost_is_estimate": true,
-    "billing_note": "Estimated from OpenCode Go Grok 4.5 token rates plus xAI's published web-search rate; the provider's billed amount may differ."
+    "billing_note": "Token-cost lower bound. The OpenCode response did not report billable web-search calls, so provider tool charges are not included.",
+    "cost_is_lower_bound": true
   }
 }

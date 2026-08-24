@@ -184,18 +184,33 @@ def usage_metrics(result: dict, duration_seconds: float) -> dict:
     output_details = raw.get("output_tokens_details") or raw.get("completion_tokens_details") or {}
     cached_tokens = int(input_details.get("cached_tokens") or input_details.get("cached_input_tokens") or 0)
     reasoning_tokens = int(output_details.get("reasoning_tokens") or 0)
-    web_search_calls = sum(
+    server_usage = result.get("server_side_tool_usage") or raw.get("server_side_tool_usage")
+    reported_search_calls = None
+    if isinstance(server_usage, dict):
+        reported_search_calls = sum(
+            int(value)
+            for key, value in server_usage.items()
+            if "WEB_SEARCH" in str(key).upper()
+        )
+    output_search_calls = sum(
         1 for item in result.get("output", [])
         if "web_search" in str(item.get("type", "")).lower()
     )
+    if reported_search_calls is None and output_search_calls:
+        reported_search_calls = output_search_calls
+
     uncached_input_tokens = max(input_tokens - cached_tokens, 0)
     token_cost = (
         uncached_input_tokens * PRICING["input_per_million"]
         + cached_tokens * PRICING["cached_input_per_million"]
         + output_tokens * PRICING["output_per_million"]
     ) / 1_000_000
-    search_cost = web_search_calls * PRICING["web_search_per_call"]
-    estimated_cost = token_cost + search_cost
+    search_cost = (
+        reported_search_calls * PRICING["web_search_per_call"]
+        if reported_search_calls is not None else None
+    )
+    estimated_cost = token_cost + (search_cost or 0)
+    cost_is_lower_bound = reported_search_calls is None
     return {
         "model": MODEL,
         "input_tokens": input_tokens,
@@ -203,14 +218,20 @@ def usage_metrics(result: dict, duration_seconds: float) -> dict:
         "output_tokens": output_tokens,
         "reasoning_tokens": reasoning_tokens,
         "total_tokens": total_tokens,
-        "web_search_calls": web_search_calls,
+        "web_search_calls": reported_search_calls,
         "duration_seconds": round(duration_seconds, 2),
         "estimated_token_cost_usd": round(token_cost, 6),
-        "estimated_web_search_cost_usd": round(search_cost, 6),
+        "estimated_web_search_cost_usd": round(search_cost, 6) if search_cost is not None else None,
         "estimated_cost_usd": round(estimated_cost, 6),
         "pricing": PRICING,
         "cost_is_estimate": True,
-        "billing_note": "Estimated from OpenCode Go Grok 4.5 token rates plus xAI's published web-search rate; the provider's billed amount may differ.",
+        "cost_is_lower_bound": cost_is_lower_bound,
+        "server_side_tool_usage": server_usage if isinstance(server_usage, dict) else None,
+        "billing_note": (
+            "Estimated from OpenCode Go Grok 4.5 token rates plus xAI's published web-search rate; the provider's billed amount may differ."
+            if not cost_is_lower_bound else
+            "Token-cost lower bound. The OpenCode response did not report billable web-search calls, so provider tool charges are not included."
+        ),
     }
 
 
@@ -306,7 +327,7 @@ def main() -> None:
     print(
         "Generation usage: "
         f"{usage['input_tokens']} input + {usage['output_tokens']} output = {usage['total_tokens']} total tokens; "
-        f"{usage['web_search_calls']} web searches; estimated ${usage['estimated_cost_usd']:.6f}"
+        f"{usage['web_search_calls'] if usage['web_search_calls'] is not None else 'unreported'} web searches; estimated ${usage['estimated_cost_usd']:.6f}"
     )
     update_index_json(now)
 
