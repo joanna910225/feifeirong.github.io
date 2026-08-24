@@ -26,6 +26,7 @@ try { feed = JSON.parse(fs.readFileSync(path.join(publicDir, 'index.json'), 'utf
 
 const compactTokens = (value: number) => value >= 1000 ? `${(value / 1000).toFixed(value >= 10000 ? 1 : 2)}k` : String(value);
 const formatCost = (value: number) => value < 0.01 ? value.toFixed(4) : value.toFixed(3);
+const renderBrief = (summary: string) => (marked.parse(summary) as string).replace(/^\s*<h1\b[^>]*>[\s\S]*?<\/h1>\s*/i, '');
 
 const news = (feed.files ?? []).slice(0, 12).map((file) => {
   try {
@@ -50,7 +51,7 @@ const news = (feed.files ?? []).slice(0, 12).map((file) => {
       timestamp: data.timestamp,
       summary,
       citations: data.citations ?? [],
-      html: marked.parse(summary) as string,
+      html: renderBrief(summary),
       usageLabel,
       usageTitle,
     };
