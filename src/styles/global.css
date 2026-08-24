@@ -104,14 +104,15 @@ main { flex: 1; padding: 72px 0 100px; }
 .news-usage { border: 1px solid #3b513f; border-radius: 999px; background: #18231a; color: var(--accent-strong); padding: 4px 8px; font-family: var(--font-mono); font-size: .62rem; line-height: 1; white-space: nowrap; }
 .chevron { color: var(--accent); font-family: var(--font-mono); font-size: 1rem; text-align: right; }
 .news-entry[open] .chevron { transform: rotate(45deg); }
-.news-content { max-width: 820px; margin-left: 187px; padding: 4px 0 38px; color: var(--text-muted); font-size: .88rem; }
+.news-content { width: 100%; max-width: none; margin-left: 0; padding: 8px 0 38px; overflow-x: auto; color: var(--text-muted); font-size: .88rem; }
 .news-content p, .news-content li { color: var(--text-muted); }
 .news-content h1, .news-content h2, .news-content h3 { margin: 30px 0 10px; color: var(--text); font-family: var(--font-sans); font-size: 1.05rem; }
 .news-content h1 { font-size: 1.2rem; }
-.news-content table { width: 100%; display: block; overflow: auto; border-collapse: collapse; }
-.news-content th, .news-content td { border-bottom: 1px solid var(--line); padding: 9px 11px; text-align: left; }
+.news-content table { width: 100%; min-width: 940px; border-collapse: collapse; table-layout: auto; }
+.news-content th, .news-content td { min-width: 135px; border-bottom: 1px solid var(--line); padding: 10px 12px; text-align: left; vertical-align: top; }
+.news-content th:first-child, .news-content td:first-child { min-width: 104px; white-space: nowrap; }
 .news-content a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
-.citations { display: flex; flex-wrap: wrap; gap: 16px; margin-left: 187px; padding: 0 0 30px; font-family: var(--font-mono); font-size: .68rem; }
+.citations { display: flex; flex-wrap: wrap; gap: 16px; margin-left: 0; padding: 0 0 30px; font-family: var(--font-mono); font-size: .68rem; }
 
 .article { max-width: 760px; margin: 0 auto; }
 .article-header { border-bottom: 1px solid var(--line); padding-bottom: 30px; margin-bottom: 42px; }

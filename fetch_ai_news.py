@@ -90,7 +90,9 @@ Return exactly this structure:
 3–5 concise bullets.
 
 ## 1. Model Releases and Major Updates
-Up to 8 items. If none qualify, say “No verified qualifying release found.”
+Up to 8 items in a compact Markdown table. Keep cells concise and move supporting detail into links:
+| Date | Model / Organization | Status & Access | What Changed | Why It Matters | Sources |
+If none qualify, say “No verified qualifying release found.”
 
 ## 2. New AI Papers and Studies
 Up to 8 items in a Markdown table:
