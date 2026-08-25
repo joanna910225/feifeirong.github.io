@@ -133,6 +133,7 @@ Disclose unverified claims and important coverage limitations. Confirm that no i
 <CHINESE>
 # AI 科技简报 — REPORT_DATE
 **统计时段:** START_UTC–END_UTC
+**北京时间:** START_BJT–END_BJT
 **生成时间:** GENERATED_AT_UTC
 
 ## 今日看点
@@ -304,15 +305,19 @@ def request_bilingual_summary(
     start_utc = utc_iso(window_start)
     end_utc = utc_iso(window_end)
     generated_at_utc = utc_iso(generated_at)
+    beijing = timezone(timedelta(hours=8))
+    start_bjt = window_start.astimezone(beijing).strftime("%Y-%m-%d %H:%M")
+    end_bjt = window_end.astimezone(beijing).strftime("%Y-%m-%d %H:%M")
     report_date = window_end.strftime("%Y-%m-%d")
     user_prompt = f"""Research and produce the bilingual AI Intelligence Briefing for {report_date}.
 
 Reporting period since the previous briefing:
 - Start: {start_utc}
 - End: {end_utc}
+- Beijing-time equivalent: {start_bjt}–{end_bjt}
 - Generated at: {generated_at_utc}
 
-The start time is the completion time of the previous briefing. Include nothing announced before it. Model releases and major model updates are the highest priority. Use web search extensively, verify dates against this exact UTC reporting period, prioritize primary sources, and return only the final bilingual briefing in the required <ENGLISH> and <CHINESE> structure. Replace REPORT_DATE, START_UTC, END_UTC, and GENERATED_AT_UTC with the exact values above."""
+The start time is the completion time of the previous briefing. Include nothing announced before it. Model releases and major model updates are the highest priority. Use web search extensively, verify dates against this exact UTC reporting period, prioritize primary sources, and return only the final bilingual briefing in the required <ENGLISH> and <CHINESE> structure. Replace REPORT_DATE, START_UTC, END_UTC, START_BJT, END_BJT, and GENERATED_AT_UTC with the exact values above."""
     payload = {
         "model": MODEL,
         "input": [
