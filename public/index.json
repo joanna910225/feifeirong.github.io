@@ -1,7 +1,8 @@
 {
-  "last_updated": "2026-08-24T10:33:42.927596+00:00",
-  "total_files": 1,
+  "last_updated": "2026-08-26T02:22:26.737498+00:00",
+  "total_files": 2,
   "files": [
+    "grok_news_summary_2026-08-26_02-22-26.json",
     "grok_news_summary_2026-08-24_10-33-42.json"
   ]
 }
