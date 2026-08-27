@@ -6,7 +6,7 @@
   "sections": {"latestPosts": "Latest posts", "selectedProjects": "Selected projects", "now": "Now / next", "nowBody": "Building node-based AI workflows and making media services run reliably across platforms.", "allProjects": "view all projects", "allPosts": "view all posts"},
   "news": {"title": "AI news desk", "intro": "A daily, model-assisted digest of AI, research, tools, and the surrounding ecosystem.", "updated": "last updated", "empty": "No news files found.", "readMore": "open briefing"},
   "blog": {"title": "Field notes", "intro": "Engineering notes, AI tools, and the occasional thought from the workbench.", "read": "read note", "back": "back to notes", "min": "min read"},
-  "projects": {"title": "Projects", "intro": "A compact map of systems, experiments, and ideas I have helped make tangible.", "current": "current work", "personal": "personal project", "concept": "concept / design", "back": "back to projects"},
+  "projects": {"title": "Projects", "intro": "A compact map of systems, experiments, and ideas I have helped make tangible.", "current": "current work", "personal": "personal project", "concept": "concept / design", "inProgress": "in progress", "back": "back to projects"},
   "about": {"title": "About", "intro": "I am Feifei Rong, an AI engineer who takes workflows from requirements and early design through integration, deployment, and launch.", "contact": "contact", "resume": "resume", "download": "download PDF", "summary": "summary", "skills": "skills", "experience": "experience", "education": "education", "city": "Shanghai", "email": "email", "linkedin": "linkedin"},
   "footer": {"built": "built with Astro · deployed on GitHub Pages", "status": "systems nominal"},
   "language": "中文"

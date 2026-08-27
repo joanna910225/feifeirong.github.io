@@ -5,7 +5,7 @@ role: Concept / Design
 period: "2026.04"
 stack: [Mobile, FashionCLIP, Multimodal LLM, FastAPI]
 summary: A mobile camera companion that returns top outfit matches, compatibility signals, and a wardrobe-gap verdict from a digitized closet. Concept / design stage, not a launched product.
-order: 4
+order: 6
 currentEmployer: false
 status: concept
 ---

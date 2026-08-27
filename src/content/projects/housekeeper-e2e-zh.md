@@ -1,16 +1,17 @@
 ---
-title: ComfyUI Housekeeper 前端自动化测试
+title: ComfyUI Housekeeper
 lang: zh
-role: Solo
-period: "2026.08"
-stack: [Playwright, TypeScript, Google Chrome, GitHub Actions]
-summary: 为重度依赖前端 UI、canvas、鼠标拖拽与节点选择的 ComfyUI Housekeeper 扩展建立可重复的 Chrome E2E 测试体系。
+role: 创建者 / 维护者
+period: "2026.08 - 至今"
+stack: [TypeScript, ComfyUI, Playwright, GitHub Actions]
+summary: 一个开源的 ComfyUI 画布整理扩展，通过一键对齐、尺寸统一、按依赖关系排列、配色和实时预览，让大型工作流更容易阅读和维护。
 order: 3
 currentEmployer: false
 status: active
+url: https://github.com/joanna910225/comfyui-housekeeper
 ---
 ## 我做了什么
 
-- 建立浏览器测试体系，覆盖面板交互、节点选择 / 拖拽 / 排列、保存重载、快捷键重绑定与 subgraph，同时配套 Node 单元测试。
-- 使用真实鼠标事件驱动操作：动态读取 DOM / LiteGraph 几何，不写死屏幕坐标。
-- 建立 CI 矩阵：legacy canvas 作为 gating 路径，Nodes 2.0 / Vue 作为 nightly 兼容性信号。
+- 开发可折叠的画布侧边面板，支持节点对齐、尺寸统一、按连接关系排列、配色、间距调整和悬停预览。
+- 支持 active subgraph、固定节点、可配置快捷键、面板拖动和单步撤销。
+- 配套单元测试和真实 Chrome Playwright 测试，并持续观察 Nodes 2.0 的兼容性。

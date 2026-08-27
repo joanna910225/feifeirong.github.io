@@ -1,16 +1,17 @@
 ---
-title: ComfyUI Housekeeper — Frontend E2E Test Suite
+title: ComfyUI Housekeeper
 lang: en
-role: Solo
-period: "2026.08"
-stack: [Playwright, TypeScript, Google Chrome, GitHub Actions]
-summary: A repeatable Chrome E2E test system for a ComfyUI Housekeeper extension whose behavior depends heavily on frontend UI, canvas geometry, node selection, and real mouse drag interactions.
+role: Creator / Maintainer
+period: "2026.08 - present"
+stack: [TypeScript, ComfyUI, Playwright, GitHub Actions]
+summary: An open-source ComfyUI canvas extension that keeps large workflows readable with one-click alignment, size normalization, graph-aware flow layout, color styling, and live previews.
 order: 3
 currentEmployer: false
 status: active
+url: https://github.com/joanna910225/comfyui-housekeeper
 ---
-## What I built
+## What I built and maintain
 
-- A browser suite covering panel interaction, node selection / drag / layout, save and reload, shortcut rebinding, and subgraph flows, alongside Node unit tests.
-- Real mouse-event-driven actions: read DOM / LiteGraph geometry dynamically rather than hard-coding screen coordinates.
-- A CI matrix with a legacy canvas gating path and a Nodes 2.0 / Vue nightly compatibility signal.
+- A collapsible canvas-side panel for alignment, size normalization, connection-aware layout, color styling, spacing, and hover previews.
+- Support for active subgraphs, pinned nodes, configurable shortcuts, draggable panel placement, and one-step undo.
+- Unit and real-Chrome Playwright tests, including stable frontend checks and a nightly Nodes 2.0 compatibility signal.

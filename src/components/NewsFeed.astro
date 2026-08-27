@@ -28,7 +28,7 @@ const compactTokens = (value: number) => value >= 1000 ? `${(value / 1000).toFix
 const formatCost = (value: number) => value < 0.01 ? value.toFixed(4) : value.toFixed(3);
 const renderBrief = (summary: string) => (marked.parse(summary) as string).replace(/^\s*<h1\b[^>]*>[\s\S]*?<\/h1>\s*/i, '');
 
-const news = (feed.files ?? []).slice(0, 12).map((file) => {
+const news = (feed.files ?? []).map((file) => {
   try {
     const data = JSON.parse(fs.readFileSync(path.join(publicDir, 'news', file), 'utf8'));
     const rawDate = data.timestamp?.slice(0, 10) ?? file.match(/\d{4}-\d{2}-\d{2}/)?.[0];

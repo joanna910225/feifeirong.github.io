@@ -5,7 +5,7 @@ role: Concept / Design
 period: "2026.04"
 stack: [Mobile, FashionCLIP, Multimodal LLM, FastAPI]
 summary: 用手机相机拍下想买的单品，基于已数字化衣橱给出搭配、兼容性与「衣橱缺口」判断。概念 / 设计阶段，不是已上线产品。
-order: 4
+order: 6
 currentEmployer: false
 status: concept
 ---

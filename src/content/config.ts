@@ -25,6 +25,7 @@ const projects = defineCollection({
     order: z.number().default(0),
     currentEmployer: z.boolean().default(false),
     status: z.string().optional(),
+    url: z.string().url().optional(),
   }),
 });
 

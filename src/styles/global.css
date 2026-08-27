@@ -80,6 +80,7 @@ main { flex: 1; padding: 72px 0 100px; }
 .card-kicker { display: flex; justify-content: space-between; gap: 18px; color: var(--text-faint); font-family: var(--font-mono); font-size: .66rem; letter-spacing: .03em; text-transform: uppercase; }
 .card-kicker span:first-child { color: var(--warm); }
 .project-card h3 { margin: 24px 0 6px; font-size: 1.2rem; letter-spacing: -.015em; }
+.project-card h3 a:hover { color: var(--accent-strong); }
 .project-card p { margin-top: 13px; font-size: .87rem; }
 .card-meta { margin-top: 0 !important; color: var(--accent) !important; font-family: var(--font-mono); font-size: .7rem !important; }
 .stack { display: flex; flex-wrap: wrap; gap: 7px; margin-top: auto; padding-top: 22px; }

@@ -347,7 +347,7 @@ The start time is the completion time of the previous briefing. Include nothing 
 
 
 def update_index_json(generated_at: datetime) -> None:
-    files = sorted((f.name for f in OUTPUT_FOLDER.glob("*.json")), key=extract_date_from_filename, reverse=True)
+    files = sorted((f.name for f in OUTPUT_FOLDER.glob("*.json")), key=lambda name: (extract_date_from_filename(name), name), reverse=True)
     data = {"last_updated": generated_at.isoformat(), "total_files": len(files), "files": files}
     (ROOT / "public" / "index.json").write_text(
         json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8"
