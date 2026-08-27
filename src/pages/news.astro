@@ -1,6 +1,6 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import NewsFeed from '../../components/NewsFeed.astro';
-import en from '../../i18n/en.json';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NewsFeed from '../components/NewsFeed.astro';
+import en from '../i18n/en.json';
 ---
 <BaseLayout locale="en" path="news" title={en.news.title} description={en.news.intro}><div class="page-header"><div class="eyebrow">~/news</div><h1>{en.news.title}</h1><p>{en.news.intro}</p></div><NewsFeed locale="en" /></BaseLayout>

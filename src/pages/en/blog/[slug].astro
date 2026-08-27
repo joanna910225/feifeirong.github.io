@@ -1,13 +1,10 @@
 ---
-import { getCollection, render } from 'astro:content';
-import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { formatDate, localePath } from '../../../data/site';
-import en from '../../../i18n/en.json';
+import { getCollection } from 'astro:content';
+
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => data.lang === 'en' && !data.draft);
-  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+  return posts.map((post) => ({ params: { slug: post.slug } }));
 }
-const { post } = Astro.props;
-const { Content } = await render(post);
+
+return Astro.redirect(`${import.meta.env.BASE_URL}blog/${Astro.params.slug}/`);
 ---
-<BaseLayout locale="en" path={`blog/${post.slug}`} title={post.data.title} description={post.data.description}><article class="article"><header class="article-header"><a class="back-link" href={localePath('en', 'blog')}>← {en.blog.back}</a><h1>{post.data.title}</h1><div class="article-meta"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, 'en')}</time><span>{post.data.category}</span></div><div class="tags">{post.data.tags.map((tag) => <span class="tag">#{tag}</span>)}</div></header><div class="article-body"><Content /></div></article></BaseLayout>

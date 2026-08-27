@@ -1,8 +1,8 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import en from '../../i18n/en.json';
-import { resume } from '../../data/resume';
-import { withBase } from '../../data/site';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import en from '../i18n/en.json';
+import { resume } from '../data/resume';
+import { withBase } from '../data/site';
 const data = resume.en;
 ---
 <BaseLayout locale="en" path="about" title={en.about.title} description={en.about.intro}><div class="page-header"><div class="eyebrow">~/about</div><h1>{en.about.title}</h1><p>{en.about.intro}</p></div><div class="resume-grid"><aside class="resume-aside"><h2>{data.name}</h2><p>{data.headline}</p><h3>{en.about.contact}</h3><p><a href={`mailto:${data.contact}`}>{data.contact}</a></p><p><a class="inline-link" href={data.linkedin} target="_blank" rel="noreferrer">{data.linkedin}</a></p><p>{en.about.city}</p><a class="button" href={withBase('resume/Feifei-Rong-Flowith-FullStack-English-One-Page-20260827.pdf')} download>{en.about.download}</a></aside><div><section class="resume-section"><h2>{en.about.summary}</h2>{data.summary.map((item) => <p>{item}</p>)}</section><section class="resume-section"><h2>{en.about.skills}</h2>{data.skills.map(([label, detail]) => <p><strong>{label}</strong><br />{detail}</p>)}</section><section class="resume-section"><h2>{en.about.experience}</h2>{data.experience.map((job) => <div class="resume-job"><h3>{job.company}</h3><p class="resume-period">{job.role} {job.period && `· ${job.period}`}</p><ul>{job.bullets.map((bullet) => <li>{bullet}</li>)}</ul></div>)}</section><section class="resume-section"><h2>{en.about.education}</h2><ul>{data.education.map((item) => <li>{item}</li>)}</ul></section></div></div></BaseLayout>

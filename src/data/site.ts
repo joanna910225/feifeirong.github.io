@@ -6,7 +6,7 @@ export const withBase = (path = '') => {
 };
 
 export const localePath = (locale: 'en' | 'zh', path = '') =>
-  withBase(`${locale}${path ? `/${path.replace(/^\/+|\/+$/g, '')}` : ''}`);
+  withBase(`${locale === 'zh' ? 'zh/' : ''}${path.replace(/^\/+|\/+$/g, '')}`);
 
 export const formatDate = (date: Date, locale: 'en' | 'zh') =>
   new Intl.DateTimeFormat(locale === 'zh' ? 'zh-CN' : 'en-US', {
