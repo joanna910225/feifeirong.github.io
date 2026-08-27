@@ -2,12 +2,12 @@
   "siteName": "Feifei Rong",
   "siteTag": "AI systems / visual tools / field notes",
   "nav": {"home": "Notes", "news": "News", "projects": "Projects", "about": "About"},
-  "hero": {"eyebrow": "AI ENGINEER · SHANGHAI", "title": "I build reliable AI systems from prototype to production.", "body": "Notes on production AI, visual workflows, and the engineering decisions that make model capabilities useful.", "prompt": "explore", "blog": "Read notes", "projects": "View projects", "news": "Browse the daily AI news desk"},
-  "sections": {"latestPosts": "Latest posts", "selectedProjects": "Selected projects", "now": "Now / next", "nowBody": "Shipping small, reliable interfaces around generative models and visual workflows.", "allProjects": "view all projects", "allPosts": "view all posts"},
+  "hero": {"eyebrow": "AI ENGINEER · SHANGHAI", "title": "I turn AI workflows into working products.", "body": "0-to-1 delivery, workflow orchestration, cross-platform deployment, and engineering with AI coding agents.", "prompt": "explore", "blog": "Read notes", "projects": "View projects", "news": "Browse the daily AI news desk"},
+  "sections": {"latestPosts": "Latest posts", "selectedProjects": "Selected projects", "now": "Now / next", "nowBody": "Building node-based AI workflows and making media services run reliably across platforms.", "allProjects": "view all projects", "allPosts": "view all posts"},
   "news": {"title": "AI news desk", "intro": "A daily, model-assisted digest of AI, research, tools, and the surrounding ecosystem.", "updated": "last updated", "empty": "No news files found.", "readMore": "open briefing"},
   "blog": {"title": "Field notes", "intro": "Engineering notes, AI tools, and the occasional thought from the workbench.", "read": "read note", "back": "back to notes", "min": "min read"},
   "projects": {"title": "Projects", "intro": "A compact map of systems, experiments, and ideas I have helped make tangible.", "current": "current work", "personal": "personal project", "concept": "concept / design", "back": "back to projects"},
-  "about": {"title": "About", "intro": "I am Feifei Rong, an AI engineer focused on turning model capabilities into dependable products and services.", "contact": "contact", "resume": "resume", "download": "download PDF", "summary": "summary", "skills": "skills", "experience": "experience", "education": "education", "city": "Shanghai", "email": "email", "linkedin": "linkedin"},
+  "about": {"title": "About", "intro": "I am Feifei Rong, an AI engineer who takes workflows from requirements and early design through integration, deployment, and launch.", "contact": "contact", "resume": "resume", "download": "download PDF", "summary": "summary", "skills": "skills", "experience": "experience", "education": "education", "city": "Shanghai", "email": "email", "linkedin": "linkedin"},
   "footer": {"built": "built with Astro · deployed on GitHub Pages", "status": "systems nominal"},
   "language": "中文"
 }

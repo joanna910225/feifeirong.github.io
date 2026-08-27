@@ -1,15 +1,14 @@
 ---
-title: ComfyUI 图像生成服务（PoC → 生产）
+title: ComfyUI 工作流生产化与多平台运行
 lang: zh
-role: AI Engineer
-period: "2024.12 – 至今"
-stack: [Python, ComfyUI, Docker, RunPod, Replicate, AutoDL, Bare Metal, AWS EC2/Lambda/S3]
-summary: 将复杂 ComfyUI 工作流从算法验证推进到生产，深度容器化，跨异构 GPU 云平台部署并持续提升可用性。
+role: AI 工程师
+period: "2024.12 - 至今"
+stack: [Python, ComfyUI, Docker, Cog, RunPod, Replicate, AutoDL, 裸机, AWS]
+summary: 将同一套 ComfyUI 工作流封装为可部署服务，适配多种云 GPU 和裸机环境，并改善运行效率与部署稳定性。
 order: 2
 currentEmployer: true
 ---
-## 我的工作方向
+## 我的工作
 
-- 将复杂 ComfyUI 工作流从算法验证推进到容器化与多云部署。
-- 建立 GPU 工作负载路由与可用性机制，包括健康检查、失败重试、负载均衡和流量削峰。
-- 从显存管理、计算图执行与服务配置等方向改善推理表现。
+- 将同一套 ComfyUI 工作流封装为可部署、可调用的服务，适配 RunPod、Replicate、AutoDL、裸机和 AWS。
+- 处理不同平台的入口形式、Custom Nodes、模型资产、Python / CUDA 依赖、容器启动和运行效率差异。

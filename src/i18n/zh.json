@@ -2,12 +2,12 @@
   "siteName": "Feifei Rong",
   "siteTag": "AI 系统 / 视觉工具 / 工作札记",
   "nav": {"home": "札记", "news": "新闻", "projects": "项目", "about": "关于"},
-  "hero": {"eyebrow": "AI 工程师 · 上海", "title": "构建从原型到生产的可靠 AI 系统。", "body": "记录生产级 AI、视觉工作流，以及让模型能力真正落地的工程判断。", "prompt": "继续浏览", "blog": "阅读札记", "projects": "查看项目", "news": "浏览每日 AI 新闻台"},
-  "sections": {"latestPosts": "最新文章", "selectedProjects": "精选项目", "now": "现在 / 下一步", "nowBody": "围绕生成式模型与视觉工作流，持续交付小而可靠的接口。", "allProjects": "查看全部项目", "allPosts": "查看全部文章"},
+  "hero": {"eyebrow": "AI 工程师 · 上海", "title": "把 AI 工作流做成真正可用的产品。", "body": "从 0 到 1 交付、工作流编排、多平台部署，以及使用 AI Coding Agent 推进工程实现。", "prompt": "继续浏览", "blog": "阅读札记", "projects": "查看项目", "news": "浏览每日 AI 新闻台"},
+  "sections": {"latestPosts": "最新文章", "selectedProjects": "精选项目", "now": "现在 / 下一步", "nowBody": "正在构建节点式 AI 工作流，并让媒体处理服务在不同平台上稳定运行。", "allProjects": "查看全部项目", "allPosts": "查看全部文章"},
   "news": {"title": "AI 新闻台", "intro": "由模型辅助整理的每日 AI、研究、工具与生态简报。", "updated": "最近更新", "empty": "暂时没有新闻文件。", "readMore": "打开简报"},
   "blog": {"title": "工作札记", "intro": "工程记录、AI 工具，以及偶尔从工作台上长出来的想法。", "read": "阅读文章", "back": "返回文章列表", "min": "分钟阅读"},
   "projects": {"title": "项目", "intro": "一张简短的地图：我参与过、正在做、或想让它变得具体的系统与实验。", "current": "当前工作", "personal": "个人项目", "concept": "概念 / 设计", "back": "返回项目"},
-  "about": {"title": "关于", "intro": "我是戎菲菲，一名 AI 工程师，专注于把模型能力转化为可靠的产品与服务。", "contact": "联系", "resume": "简历", "download": "下载 PDF", "summary": "职业概况", "skills": "核心技能", "experience": "工作经历", "education": "教育经历", "city": "上海", "email": "邮箱", "linkedin": "LinkedIn"},
+  "about": {"title": "关于", "intro": "我是戎菲菲，一名 AI 工程师，从需求和前期方案一路把工作流推进到集成、部署和上线。", "contact": "联系", "resume": "简历", "download": "下载 PDF", "summary": "职业概况", "skills": "核心技能", "experience": "工作经历", "education": "教育经历", "city": "上海", "email": "邮箱", "linkedin": "LinkedIn"},
   "footer": {"built": "使用 Astro 构建 · 部署于 GitHub Pages", "status": "系统正常"},
   "language": "EN"
 }

@@ -1,15 +1,14 @@
 ---
-title: ComfyUI Image-Generation Service (PoC → Production)
+title: ComfyUI Workflow Productionization & Cross-Platform Runtime
 lang: en
 role: AI Engineer
-period: "2024.12 – present"
-stack: [Python, ComfyUI, Docker, RunPod, Replicate, AutoDL, Bare Metal, AWS EC2/Lambda/S3]
-summary: Moving complex ComfyUI image-generation workflows from algorithm validation toward production through deep containerization, heterogeneous GPU deployment, and service reliability work.
+period: "2024.12 - present"
+stack: [Python, ComfyUI, Docker, Cog, RunPod, Replicate, AutoDL, Bare Metal, AWS]
+summary: Packaging the same ComfyUI workflow as a deployable service across cloud GPU and bare-metal environments while improving runtime efficiency and deployment stability.
 order: 2
 currentEmployer: true
 ---
 ## What I work on
 
-- Productionize complex ComfyUI workflows from algorithm validation through containerization and multi-cloud deployment.
-- Build GPU workload routing and availability patterns with health checks, retries, load balancing, and traffic smoothing.
-- Improve inference behavior through memory management, graph execution, and service configuration.
+- Package the same ComfyUI workflow as a deployable, callable service across RunPod, Replicate, AutoDL, bare-metal hosts, and AWS.
+- Resolve differences in platform entrypoints, Custom Nodes, model assets, Python / CUDA dependencies, container startup, and runtime efficiency.
