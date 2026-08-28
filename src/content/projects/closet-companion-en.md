@@ -8,6 +8,7 @@ summary: A mobile camera companion that returns top outfit matches, compatibilit
 order: 6
 currentEmployer: false
 status: concept
+url: https://github.com/joanna910225/hang-on-wardrobe
 ---
 ## The idea
 

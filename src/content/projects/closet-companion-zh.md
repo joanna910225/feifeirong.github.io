@@ -8,6 +8,7 @@ summary: 用手机相机拍下想买的单品，基于已数字化衣橱给出�
 order: 6
 currentEmployer: false
 status: concept
+url: https://github.com/joanna910225/hang-on-wardrobe
 ---
 ## 想法
 
