@@ -133,6 +133,8 @@ main { flex: 1; padding: 72px 0 100px; }
 .article-body blockquote { margin: 28px 0; border-left: 2px solid var(--accent); padding: 4px 0 4px 20px; }
 .article-body code { color: var(--accent-strong); font-family: var(--font-mono); }
 .article-body pre { overflow: auto; border: 1px solid var(--line); background: #0b0f0c; padding: 18px; }
+.article-body table { display: block; width: 100%; overflow-x: auto; border-collapse: collapse; }
+.article-body th, .article-body td { border-bottom: 1px solid var(--line); padding: 10px 12px; text-align: left; vertical-align: top; }
 .article-body img { max-width: 100%; }
 .back-link { color: var(--text-faint); font-family: var(--font-mono); font-size: .72rem; }
 
