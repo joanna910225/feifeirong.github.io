@@ -15,8 +15,9 @@ const statusLabel = project.data.status === 'concept'
 ---
 <article class="project-card">
   <div class="card-kicker"><span>{statusLabel}</span><span>{project.data.period}</span></div>
-  <h3>{project.data.url ? <a href={project.data.url} target="_blank" rel="noreferrer">{project.data.title} ↗</a> : project.data.title}</h3>
+  <h3>{project.data.title}</h3>
   <p class="card-meta">{project.data.role}</p>
   <p>{project.data.summary}</p>
   <div class="stack">{project.data.stack.slice(0, 4).map((item) => <span>{item}</span>)}</div>
+  {project.data.url && <a class="text-link project-link" href={project.data.url} target="_blank" rel="noreferrer">GitHub ↗</a>}
 </article>

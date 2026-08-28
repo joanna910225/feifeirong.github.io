@@ -85,6 +85,7 @@ main { flex: 1; padding: 72px 0 100px; }
 .card-meta { margin-top: 0 !important; color: var(--accent) !important; font-family: var(--font-mono); font-size: .7rem !important; }
 .stack { display: flex; flex-wrap: wrap; gap: 7px; margin-top: auto; padding-top: 22px; }
 .stack span, .tag { background: #1b221c; color: var(--text-faint); padding: 3px 8px; font-family: var(--font-mono); font-size: .62rem; }
+.project-link { margin-top: 14px; }
 .text-link { color: var(--accent); font-family: var(--font-mono); font-size: .72rem; }
 .now-line { display: grid; grid-template-columns: 150px 1fr; gap: 28px; border-top: 1px solid var(--line); padding-top: 22px; }
 .now-line span { color: var(--warm); font-family: var(--font-mono); font-size: .68rem; text-transform: uppercase; }
