@@ -5,6 +5,7 @@ lang: en
 category: CS153
 tags: ["course", "stanford", "cs153", "audio", "voice", "agents", "text-to-speech", "dubbing"]
 description: "How ElevenLabs grew from a text-to-speech wedge into a production stack for dubbing, localization, and real-time voice agents."
+translationKey: cs153-lecture-2
 draft: false
 ---
 

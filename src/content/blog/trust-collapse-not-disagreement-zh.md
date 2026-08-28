@@ -5,6 +5,7 @@ lang: zh
 category: Insights
 tags: ["insight"]
 description: "分歧可以修复；当诚实、动机与共同愿景不再可信时，合作才真正走到终点。"
+translationKey: trust-collapse-not-disagreement
 draft: false
 ---
 

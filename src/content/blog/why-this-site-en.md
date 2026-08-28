@@ -5,6 +5,7 @@ lang: en
 category: Life
 tags: [site, notes, AI]
 description: A small technical station for keeping the useful parts of ongoing work in public.
+translationKey: why-this-site
 draft: false
 ---
 This site is deliberately smaller than a portfolio and less formal than a resume. It is a place to keep three things together: the systems I work on, the experiments I am learning from, and a daily signal check on AI.

@@ -5,6 +5,7 @@ lang: zh
 category: Insights
 tags: ["insight"]
 description: "当信息处理越来越便宜，物理世界与人际信任驱动的工作会变得更重要。"
+translationKey: human-centered-is-key
 draft: false
 ---
 

@@ -5,6 +5,7 @@ lang: en
 category: CS153
 tags: ["course", "stanford", "cs153", "multimodal", "video-generation", "world-models", "agents", "3d"]
 description: "Why Luma AI moved from 3D capture to video and then toward unified models for end-to-end multimodal work."
+translationKey: cs153-lecture-4
 draft: false
 ---
 

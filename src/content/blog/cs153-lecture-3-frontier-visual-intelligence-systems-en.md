@@ -5,6 +5,7 @@ lang: en
 category: CS153
 tags: ["course", "stanford", "cs153", "visual-intelligence", "diffusion", "multimodal", "image-generation", "world-models"]
 description: "From latent diffusion to multimodal visual intelligence, with deployment feedback shaping the Flux model roadmap."
+translationKey: cs153-lecture-3
 draft: false
 ---
 

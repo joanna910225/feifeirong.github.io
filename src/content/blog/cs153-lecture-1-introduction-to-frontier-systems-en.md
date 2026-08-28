@@ -5,6 +5,7 @@ lang: en
 category: CS153
 tags: ["course", "stanford", "cs153", "compute", "scaling-laws", "infrastructure", "reinforcement-learning", "context"]
 description: "AI scaling, context feedback loops, infrastructure bottlenecks, and why compute remains in a pre-standardization era."
+translationKey: cs153-lecture-1
 draft: false
 ---
 

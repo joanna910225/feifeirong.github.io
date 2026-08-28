@@ -5,6 +5,7 @@ lang: zh
 category: Life
 tags: [site, notes, AI]
 description: 给持续进行的工作留一张小而公开的技术工作台。
+translationKey: why-this-site
 draft: false
 ---
 这个站刻意比作品集小，也比简历不正式。这里想放在一起的有三类内容：正在做的系统、从实验里学到的东西，以及对 AI 行业每日信号的整理。

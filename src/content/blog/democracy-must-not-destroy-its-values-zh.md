@@ -5,6 +5,7 @@ lang: zh
 category: Insights
 tags: ["insight"]
 description: "技术使用需要高层边界：如果胜利依赖于摧毁自身价值的手段，那种胜利并不值得。"
+translationKey: democracy-must-not-destroy-its-values
 draft: false
 ---
 

@@ -5,6 +5,7 @@ lang: zh
 category: Insights
 tags: ["insight"]
 description: "三秒内容文化正在把复杂议题压成条件反射，也挤掉认真阅读与成熟对话。"
+translationKey: social-media-crowds-out-serious-thinking
 draft: false
 ---
 

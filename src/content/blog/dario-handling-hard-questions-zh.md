@@ -5,6 +5,7 @@ lang: zh
 category: Insights
 tags: ["insight", "沟通", "话术"]
 description: "从重构问题到校准不确定性：拆解 Dario Amodei 面对尖锐提问时使用的十二种沟通工具。"
+translationKey: dario-handling-hard-questions
 draft: false
 ---
 
