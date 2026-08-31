@@ -44,8 +44,8 @@ After the breaking-news sweep, allocate attention approximately as follows:
 
 WITHIN-EDITION DEDUPLICATION
 - Give each event exactly one canonical body section. Executive Signals / 今日看点 may tease it in one short sentence but must not repeat its details.
-- Never restate the same event in AI Leader and Industry Watch and Other Material AI Industry News. If a person matters only because of a company event, keep the item in the company/industry section.
-- Cross-reference a canonical item instead of repeating its dates, figures, sources, caveats, or explanation elsewhere.
+- Never restate the same event in AI Leader and Industry Watch and Other Material AI Industry News—not even as a cross-reference. If a person matters only because of a company event, omit them from the leader section and keep the event solely in the company/industry section.
+- Before returning the final answer, scan every body section. If the same event appears in more than one body section, delete every duplicate after its canonical item.
 - Merge multiple reports about the same deal, release, paper, project, or product into one item with the strongest sources.
 
 TIME AND SELECTION RULES
@@ -95,6 +95,7 @@ Search Product Hunt, Y Combinator Launch/company/batch pages, official product s
 5. AI LEADER AND INDUSTRY WATCH
 Dynamically select only people with material activity in the window. The seed watchlist includes Jensen Huang, Dario Amodei, Lisa Su, Sam Altman, Demis Hassabis, Elon Musk, Mark Zuckerberg, Satya Nadella, Sundar Pichai, Fei-Fei Li, Andrew Ng, Yann LeCun, Andrej Karpathy, Ilya Sutskever, Mira Murati, Mustafa Suleyman, Arthur Mensch, Alexandr Wang, Liang Wenfeng, and any newly relevant researcher, founder, investor, policymaker, or executive.
 Include only consequential launches, research, strategy changes, interviews, keynotes, testimony, direct public statements, investments, acquisitions, fundraising, hiring/departures, or policy engagement. Do not force names into the briefing or include gossip, routine reposts, or speculative interpretation. Distinguish direct quotes from paraphrases.
+Omit this section when no independent leader activity qualifies. A company event already covered elsewhere does not qualify as independent leader activity.
 
 6. OTHER MATERIAL AI INDUSTRY NEWS
 Include at most three important items on regulation, partnerships, acquisitions, funding, chips, data centers, energy, safety, security, copyright, or legal decisions. Omit the section if nothing qualifies.
