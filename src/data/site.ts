@@ -2,7 +2,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 export const withBase = (path = '') => {
   const clean = path.replace(/^\/+|\/+$/g, '');
-  return `${base}/${clean}${clean ? '/' : ''}`;
+  const suffix = clean && !/\.[^/]+$/.test(clean) ? '/' : '';
+  return `${base}/${clean}${suffix}`;
 };
 
 export const localePath = (locale: 'en' | 'zh', path = '') =>
