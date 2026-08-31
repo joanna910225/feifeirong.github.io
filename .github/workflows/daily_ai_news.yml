@@ -18,6 +18,10 @@ on:
         description: Optional UTC cutoff time, for example 2026-08-24T01:00:00Z
         required: false
         type: string
+      editorial_leads:
+        description: Optional source URLs or leads that must be investigated
+        required: false
+        type: string
 
 concurrency:
   group: daily-ai-news
@@ -49,6 +53,7 @@ jobs:
           FORCE_GENERATE: ${{ inputs.force || 'false' }}
           COVERAGE_START_UTC: ${{ inputs.coverage_start_utc || '' }}
           COVERAGE_END_UTC: ${{ inputs.coverage_end_utc || '' }}
+          EDITORIAL_LEADS: ${{ inputs.editorial_leads || '' }}
 
       - name: Commit and push changes
         run: |
