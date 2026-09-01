@@ -2,7 +2,7 @@
 title: ComfyUI Node Maintainer
 lang: zh
 role: 创建者 / 维护者
-period: "2026.04 - 至今"
+period: "2026.09 - 至今"
 stack: [GitHub Apps, GitHub Actions, ComfyUI, AI Agents]
 summary: 一个面向 ComfyUI Custom Node 的开源 AI Maintainer，持续发现上游兼容性风险，规划并验证适配，整理 Issue，并提交附带验证证据的 Draft PR。
 order: 3.5

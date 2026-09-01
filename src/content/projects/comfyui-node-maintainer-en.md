@@ -2,7 +2,7 @@
 title: ComfyUI Node Maintainer
 lang: en
 role: Creator / Maintainer
-period: "2026.04 - present"
+period: "2026.09 - present"
 stack: [GitHub Apps, GitHub Actions, ComfyUI, AI Agents]
 summary: An open-source AI maintainer for ComfyUI custom nodes that detects upstream compatibility risks, plans and tests adaptations, maintains issues, and opens evidence-backed draft pull requests.
 order: 3.5
