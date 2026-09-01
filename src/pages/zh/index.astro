@@ -6,7 +6,7 @@ import BlogCard from '../../components/BlogCard.astro';
 import zh from '../../i18n/zh.json';
 import { localePath } from '../../data/site';
 const posts = (await getCollection('blog', ({ data }) => data.lang === 'zh' && !data.draft)).sort((a,b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 2);
-const projects = (await getCollection('projects', ({ data }) => data.lang === 'zh')).sort((a,b) => a.data.order - b.data.order).slice(0, 2);
+const projects = (await getCollection('projects', ({ data }) => data.lang === 'zh' && ['ComfyUI Housekeeper', '衣橱感知购物助手（概念）'].includes(data.title))).sort((a,b) => a.data.order - b.data.order);
 ---
 <BaseLayout locale="zh" title={zh.nav.home}>
   <section class="hero"><div class="hero-copy"><div class="eyebrow">{zh.hero.eyebrow}</div><h1>{zh.hero.title}<span class="cursor">_</span></h1><p>{zh.hero.body}</p><div class="hero-actions"><a class="button primary" href={localePath('zh', 'blog')}>{zh.hero.blog}</a><a class="button" href={localePath('zh', 'projects')}>{zh.hero.projects}</a></div><a class="quiet-link" href={localePath('zh', 'news')}>{zh.hero.news} →</a></div></section>
