@@ -1,18 +1,20 @@
 ---
-title: Codex Long-Session Handoff Journal
+title: Codex Handoff Skill
 lang: en
-role: Workflow Design / Experiment
+role: Creator / Maintainer
 period: "2026.08 - present"
-stack: [Codex, Multi-Agent Workflows, Markdown, Git]
-summary: "An evolving workflow for long Codex tasks: lead and worker agents, single-writer directory ownership, tested checkpoints, and compact handoffs that carry decisions, risks, changed files, and one next step into a fresh chat."
+stack: [Codex, Multi-Agent Workflows, Markdown, Shell]
+summary: "An open-source Codex skill for context-health checks, cost-aware model and subagent routing, and evidence-preserving rotation across long AI coding sessions."
 order: 4
 currentEmployer: false
-status: in-progress
+status: active
+url: https://github.com/joanna910225/codex-handoff-skill
 ---
-## What I am testing
+## What I built and maintain
 
-- A lead agent breaks work into small slices, freezes interfaces, assigns directory ownership, validates results, and chooses the next model or agent.
-- Worker agents stop at clean boundaries, run tests, and write a compact handoff instead of letting one conversation accumulate unlimited context.
-- Each handoff records completed work, changed files, test results, decisions, risks, and exactly one next step.
+- Automatic `CONTINUE`, `CHECKPOINT`, or `ROTATE` decisions when context pressure, phase changes, repeated work, or model mismatch appear.
+- Cost-aware routing that keeps consequential decisions with the main agent and delegates bounded work to an appropriate subagent and model.
+- Compact handoffs that preserve completed work, changed files, test results, decisions, risks, and exactly one next step.
+- A public installer that backs up existing configuration, preserves `AGENTS.md`, and installs the skill plus a read-only reviewer profile.
 
-The goal is not more orchestration for its own sake. It is to keep long-running AI development understandable, reviewable, and easy to resume.
+The goal is not more orchestration for its own sake. It is to keep long-running AI development understandable, reviewable, economical, and easy to resume.

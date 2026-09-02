@@ -6,7 +6,7 @@ import BlogCard from '../components/BlogCard.astro';
 import en from '../i18n/en.json';
 import { localePath } from '../data/site';
 const posts = (await getCollection('blog', ({ data }) => data.lang === 'en' && !data.draft)).sort((a,b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 2);
-const projects = (await getCollection('projects', ({ data }) => data.lang === 'en' && ['ComfyUI Housekeeper', 'Closet-Aware Shopping Companion (concept)'].includes(data.title))).sort((a,b) => a.data.order - b.data.order);
+const projects = (await getCollection('projects', ({ data }) => data.lang === 'en' && ['ComfyUI Housekeeper', 'Codex Handoff Skill', 'Closet-Aware Shopping Companion (concept)'].includes(data.title))).sort((a,b) => a.data.order - b.data.order);
 ---
 <BaseLayout locale="en" title={en.nav.home}>
   <section class="hero">
