@@ -376,10 +376,16 @@ Replace REPORT_DATE, START_UTC, END_UTC, LOOKBACK_START_UTC, START_BJT, END_BJT,
         "temperature": 0.2,
         "max_output_tokens": 10000,
     }
+    session_id = os.getenv("GITHUB_RUN_ID") or f"feifeirong-news-{report_date}"
     started = time.monotonic()
     response = requests.post(
         API_URL,
-        headers={"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"},
+        headers={
+            "Authorization": f"Bearer {API_KEY}",
+            "Content-Type": "application/json",
+            "User-Agent": "feifeirong-news/1.0",
+            "x-opencode-session": session_id,
+        },
         json=payload,
         timeout=600,
     )
