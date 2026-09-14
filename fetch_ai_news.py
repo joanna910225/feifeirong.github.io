@@ -3,31 +3,27 @@ from __future__ import annotations
 import json
 import os
 import re
+import subprocess
 import sys
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-import requests
-
-API_URL = "https://opencode.ai/zen/go/v1/responses"
-API_KEY = os.getenv("OPENCODE_GO_API_KEY")
-MODEL = "grok-4.5"
+API_KEY = os.getenv("COMMAND_CODE_API_KEY")
+MODEL = os.getenv("COMMAND_CODE_MODEL", "deepseek/deepseek-v4-flash")
 ROOT = Path(__file__).resolve().parent
 OUTPUT_FOLDER = ROOT / "public" / "news"
 OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
 
-# OpenCode Go Grok 4.5 rates (USD per 1M tokens). Web-search pricing uses
-# xAI's published $5 / 1K calls because OpenCode does not expose a billed-cost
-# field in its public Go documentation. The saved dollar value is an estimate.
+# Command Code GOAT DeepSeek V4 Flash rates (USD per 1M tokens).
+# CLI web-tool charges are not published, so the saved cost is a lower bound.
 PRICING = {
-    "input_per_million": 2.00,
-    "cached_input_per_million": 0.30,
-    "output_per_million": 6.00,
-    "web_search_per_call": 0.005,
+    "input_per_million": 0.15,
+    "cached_input_per_million": 0.003,
+    "output_per_million": 0.60,
 }
 
-SYSTEM_PROMPT = r"""You are Grok acting as an evidence-first technology news editor. Research, verify, rank, and write a bilingual AI news briefing for the exact UTC window supplied by the user.
+SYSTEM_PROMPT = r"""You are an evidence-first technology news editor. Research, verify, rank, and write a bilingual AI news briefing for the exact UTC window supplied by the user.
 
 BREAKING NEWS SWEEP — RUN FIRST
 - Before researching individual sections, run a separate breaking-news search for major AI acquisitions, mergers, investments, fundraising, executive changes, regulatory actions, and strategic partnerships.
@@ -240,24 +236,9 @@ def recent_briefing_context(limit: int = 2) -> str:
     ) or "No previous briefing is available."
 
 
-def collect_response_text_and_citations(result: dict) -> tuple[str, list[str]]:
-    text_parts: list[str] = []
-    citations: list[str] = []
-    for item in result.get("output", []):
-        if item.get("type") != "message":
-            continue
-        for content in item.get("content", []):
-            if content.get("type") == "output_text":
-                text_parts.append(content.get("text", ""))
-            for annotation in content.get("annotations", []):
-                if annotation.get("type") == "url_citation" and annotation.get("url"):
-                    citations.append(annotation["url"])
-    for url in result.get("citations", []):
-        if isinstance(url, str):
-            citations.append(url)
-        elif isinstance(url, dict) and url.get("url"):
-            citations.append(url["url"])
-    return "".join(text_parts).strip(), list(dict.fromkeys(citations))
+def extract_citations(text: str) -> list[str]:
+    urls = (url.rstrip(".,;:'\"!?]") for url in re.findall(r"https?://[^\s<>()]+", text))
+    return list(dict.fromkeys(urls))
 
 
 def parse_bilingual_output(text: str) -> tuple[str, str]:
@@ -272,63 +253,35 @@ def parse_bilingual_output(text: str) -> tuple[str, str]:
     return summary_en, summary_zh
 
 
-def usage_metrics(result: dict, duration_seconds: float) -> dict:
+def usage_metrics(result: dict, web_search_calls: int, duration_seconds: float) -> dict:
     raw = result.get("usage") or {}
-    input_tokens = int(raw.get("input_tokens") or raw.get("prompt_tokens") or 0)
-    output_tokens = int(raw.get("output_tokens") or raw.get("completion_tokens") or 0)
-    total_tokens = int(raw.get("total_tokens") or (input_tokens + output_tokens))
-    input_details = raw.get("input_tokens_details") or raw.get("prompt_tokens_details") or {}
-    output_details = raw.get("output_tokens_details") or raw.get("completion_tokens_details") or {}
-    cached_tokens = int(input_details.get("cached_tokens") or input_details.get("cached_input_tokens") or 0)
-    reasoning_tokens = int(output_details.get("reasoning_tokens") or 0)
-    server_usage = result.get("server_side_tool_usage") or raw.get("server_side_tool_usage")
-    reported_search_calls = None
-    if isinstance(server_usage, dict):
-        reported_search_calls = sum(
-            int(value)
-            for key, value in server_usage.items()
-            if "WEB_SEARCH" in str(key).upper()
-        )
-    output_search_calls = sum(
-        1 for item in result.get("output", [])
-        if "web_search" in str(item.get("type", "")).lower()
-    )
-    if reported_search_calls is None and output_search_calls:
-        reported_search_calls = output_search_calls
-
-    uncached_input_tokens = max(input_tokens - cached_tokens, 0)
+    input_tokens = int(raw.get("inputTokens") or 0)
+    output_tokens = int(raw.get("outputTokens") or 0)
+    cached_tokens = int(raw.get("cacheReadTokens") or 0)
+    cache_write_tokens = int(raw.get("cacheWriteTokens") or 0)
+    total_tokens = input_tokens + output_tokens + cached_tokens + cache_write_tokens
     token_cost = (
-        uncached_input_tokens * PRICING["input_per_million"]
+        input_tokens * PRICING["input_per_million"]
         + cached_tokens * PRICING["cached_input_per_million"]
         + output_tokens * PRICING["output_per_million"]
     ) / 1_000_000
-    search_cost = (
-        reported_search_calls * PRICING["web_search_per_call"]
-        if reported_search_calls is not None else None
-    )
-    estimated_cost = token_cost + (search_cost or 0)
-    cost_is_lower_bound = reported_search_calls is None
     return {
         "model": MODEL,
         "input_tokens": input_tokens,
         "cached_input_tokens": cached_tokens,
+        "cache_write_tokens": cache_write_tokens,
         "output_tokens": output_tokens,
-        "reasoning_tokens": reasoning_tokens,
         "total_tokens": total_tokens,
-        "web_search_calls": reported_search_calls,
+        "web_search_calls": web_search_calls,
         "duration_seconds": round(duration_seconds, 2),
         "estimated_token_cost_usd": round(token_cost, 6),
-        "estimated_web_search_cost_usd": round(search_cost, 6) if search_cost is not None else None,
-        "estimated_cost_usd": round(estimated_cost, 6),
+        "estimated_web_search_cost_usd": None,
+        "estimated_cost_usd": round(token_cost, 6),
         "pricing": PRICING,
         "cost_is_estimate": True,
-        "cost_is_lower_bound": cost_is_lower_bound,
-        "server_side_tool_usage": server_usage if isinstance(server_usage, dict) else None,
-        "billing_note": (
-            "Estimated from OpenCode Go Grok 4.5 token rates plus xAI's published web-search rate; the provider's billed amount may differ."
-            if not cost_is_lower_bound else
-            "Token-cost lower bound. The OpenCode response did not report billable web-search calls, so provider tool charges are not included."
-        ),
+        "cost_is_lower_bound": True,
+        "cli_usage": raw,
+        "billing_note": "Token-cost lower bound estimated from Command Code GOAT DeepSeek V4 Flash rates; CLI web-tool charges are not included.",
     }
 
 
@@ -366,38 +319,40 @@ Investigate these editor-supplied leads during the breaking-news sweep. They are
 </EDITORIAL_LEADS>
 
 Replace REPORT_DATE, START_UTC, END_UTC, LOOKBACK_START_UTC, START_BJT, END_BJT, and GENERATED_AT_UTC with the exact values above."""
-    payload = {
-        "model": MODEL,
-        "input": [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt},
-        ],
-        "tools": [{"type": "web_search"}],
-        "temperature": 0.2,
-        "max_output_tokens": 10000,
-    }
-    session_id = os.getenv("GITHUB_RUN_ID") or f"feifeirong-news-{report_date}"
     started = time.monotonic()
-    response = requests.post(
-        API_URL,
-        headers={
-            "Authorization": f"Bearer {API_KEY}",
-            "Content-Type": "application/json",
-            "User-Agent": "feifeirong-news/1.0",
-            "x-opencode-session": session_id,
-        },
-        json=payload,
-        timeout=600,
+    completed = subprocess.run(
+        [
+            "cmd", "-p", "--skip-onboarding", "--trust", "--no-session",
+            "--no-auto-update", "--no-skills", "--model", MODEL,
+            "--max-turns", "80", "--output-format", "json",
+        ],
+        input=f"{SYSTEM_PROMPT}\n\n{user_prompt}",
+        text=True,
+        capture_output=True,
+        timeout=900,
+        cwd=ROOT,
     )
     duration = time.monotonic() - started
-    if response.status_code != 200:
-        raise RuntimeError(f"API error {response.status_code}: {response.text}")
-    result = response.json()
-    text, citations = collect_response_text_and_citations(result)
+    frames = []
+    for line in completed.stdout.splitlines():
+        try:
+            frames.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
+    result = next((frame for frame in reversed(frames) if frame.get("type") == "result"), None)
+    if completed.returncode != 0 or not result or result.get("subtype") != "success":
+        detail = result.get("error") if result else completed.stderr.strip() or completed.stdout[-2000:]
+        raise RuntimeError(f"Command Code failed (exit {completed.returncode}): {detail}")
+    text = result.get("finalText", "").strip()
     if not text:
-        raise RuntimeError("API returned no text")
+        raise RuntimeError("Command Code returned no text")
+    web_search_calls = sum(
+        frame.get("event", {}).get("toolName") == "web_search"
+        for frame in frames if frame.get("type") == "event"
+        and frame.get("event", {}).get("type") == "tool_running"
+    )
     summary_en, summary_zh = parse_bilingual_output(text)
-    return summary_en, summary_zh, citations, usage_metrics(result, duration)
+    return summary_en, summary_zh, extract_citations(text), usage_metrics(result, web_search_calls, duration)
 
 
 def update_index_json(generated_at: datetime) -> None:
@@ -411,7 +366,7 @@ def update_index_json(generated_at: datetime) -> None:
 
 def main() -> None:
     if not API_KEY:
-        print("Error: OPENCODE_GO_API_KEY environment variable is not set")
+        print("Error: COMMAND_CODE_API_KEY environment variable is not set")
         sys.exit(1)
 
     generated_at = datetime.now(timezone.utc)
@@ -441,7 +396,7 @@ def main() -> None:
         print(f"Error: coverage end {utc_iso(window_end)} is after generation time {utc_iso(generated_at)}")
         sys.exit(1)
     timestamp = generated_at.strftime("%Y-%m-%d_%H-%M-%S")
-    output_file = OUTPUT_FOLDER / f"grok_news_summary_{timestamp}.json"
+    output_file = OUTPUT_FOLDER / f"ai_news_summary_{timestamp}.json"
 
     try:
         summary_en, summary_zh, citations, usage = request_bilingual_summary(

@@ -43,13 +43,18 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Install dependencies
-        run: pip install requests
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Install Command Code
+        run: npm install --global command-code
 
       - name: Fetch bilingual AI news
         run: python fetch_ai_news.py
         env:
-          OPENCODE_GO_API_KEY: ${{ secrets.OPENCODE_GO_API_KEY }}
+          COMMAND_CODE_API_KEY: ${{ secrets.COMMAND_CODE_API_KEY }}
           FORCE_GENERATE: ${{ inputs.force || 'false' }}
           COVERAGE_START_UTC: ${{ inputs.coverage_start_utc || '' }}
           COVERAGE_END_UTC: ${{ inputs.coverage_end_utc || '' }}
