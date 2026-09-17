@@ -8,7 +8,7 @@ description: A small technical station for keeping the useful parts of ongoing w
 translationKey: why-this-site
 draft: false
 ---
-This site is deliberately smaller than a portfolio and less formal than a resume. It is a place to keep three things together: the systems I work on, the experiments I am learning from, and a daily signal check on AI.
+This site is deliberately smaller than a portfolio and less formal than a resume. It is a place to keep three things together: the systems I work on, the experiments I am learning from, and a signal check on AI three times a week.
 
 The terminal skin is a reminder of the engineering layer underneath. The point is not nostalgia; it is to make the interface feel like a workbench: plain, inspectable, and easy to extend.
 

@@ -1,0 +1,41 @@
+/* ------------------------------------------------------------------
+   Site components layered on top of global.css.
+   Kept separate from theme.css (which owns colour tokens) and from
+   global.css (which holds another session's uncommitted work).
+   ------------------------------------------------------------------ */
+
+/* Hero: the AI news desk entry and the contact line.
+   They must stack, because .quiet-link is inline-block and would
+   otherwise sit beside the news link rather than below it. */
+.hero-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.hero-links .quiet-link { margin-top: 0; }
+
+/* The news desk is a headline feature, not a footnote: give it the
+   outlined treatment the site already uses for secondary actions instead
+   of the muted quiet-link grey. */
+.hero-news {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid var(--line-strong);
+  padding: 8px 14px;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: .74rem;
+  transition: border-color .18s ease, background .18s ease, color .18s ease;
+}
+
+.hero-news:hover {
+  border-color: var(--accent);
+  background: var(--surface-soft);
+  color: var(--accent-strong);
+}
+
+.hero-news:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
