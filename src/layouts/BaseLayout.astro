@@ -66,15 +66,24 @@ const themeLabels = locale === 'zh'
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={metaDescription} />
     <meta name="twitter:image" content={ogImage} />
-    <!-- Apply the saved theme before first paint to avoid a flash. -->
+    <!--
+      Resolve the theme before first paint to avoid a flash.
+      Order of precedence: explicit visitor choice (localStorage) > OS
+      preference > light. Light is the fallback when the OS preference is
+      unavailable or reports neither value.
+    -->
     <script is:inline>
       (function () {
+        var theme = 'light';
         try {
           var saved = localStorage.getItem('site-theme');
-          if (saved === 'light' || saved === 'dark') {
-            document.documentElement.setAttribute('data-theme', saved);
+          if (saved === 'light' || saved === 'dark') theme = saved;
+          else if (window.matchMedia) {
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) theme = 'dark';
+            else if (window.matchMedia('(prefers-color-scheme: light)').matches) theme = 'light';
           }
         } catch (e) {}
+        document.documentElement.setAttribute('data-theme', theme);
       })();
     </script>
   </head>
@@ -124,6 +133,21 @@ const themeLabels = locale === 'zh'
           try { localStorage.setItem('site-theme', next); } catch (e) {}
           sync();
         });
+
+        // While following the OS, react to the OS switching theme mid-session —
+        // but never override a theme the visitor picked explicitly.
+        if (window.matchMedia) {
+          var mq = window.matchMedia('(prefers-color-scheme: dark)');
+          var onOsChange = function (e) {
+            var chosen = null;
+            try { chosen = localStorage.getItem('site-theme'); } catch (err) {}
+            if (chosen === 'light' || chosen === 'dark') return;
+            root.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+            sync();
+          };
+          if (mq.addEventListener) mq.addEventListener('change', onOsChange);
+          else if (mq.addListener) mq.addListener(onOsChange);
+        }
 
         sync();
       })();
