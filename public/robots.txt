@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://joanna910225.github.io/feifeirong.github.io/sitemap-index.xml

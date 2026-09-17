@@ -17,6 +17,24 @@ const nav = [
 ];
 const alternatePath = locale === 'en' ? localePath('zh', path) : localePath('en', path);
 const pageTitle = title ? `${title} — ${ui.siteName}` : ui.siteName;
+
+// SEO / social metadata.
+// NOTE: `path` is the *counterpart* path (it is what the language switcher
+// links to), so it must not be used to build this page's own canonical URL.
+// `Astro.url.pathname` is the only reliable source for the current page.
+const origin = Astro.site ?? new URL('https://joanna910225.github.io');
+// Astro reports the site root as ".../feifeirong.github.io" without a trailing
+// slash while every other route keeps one; normalise so canonicals match the
+// hreflang URLs (and how the pages are actually served as directory indexes).
+const rawPath = Astro.url.pathname;
+const canonicalPath = rawPath.endsWith('/') ? rawPath : rawPath + '/';
+const canonicalUrl = new URL(canonicalPath, origin).href;
+const alternateUrl = new URL(alternatePath, origin).href;
+const enUrl = locale === 'en' ? canonicalUrl : alternateUrl;
+const zhUrl = locale === 'zh' ? canonicalUrl : alternateUrl;
+const metaDescription = description ?? ui.siteTag;
+const ogImage = new URL(withBase('og-cover.png'), origin).href;
+const ogLocale = locale === 'zh' ? 'zh_CN' : 'en_US';
 const themeLabels = locale === 'zh'
   ? { toLight: '切换到浅色主题', toDark: '切换到深色主题' }
   : { toLight: 'Switch to light theme', toDark: 'Switch to dark theme' };
@@ -26,9 +44,28 @@ const themeLabels = locale === 'zh'
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="description" content={description ?? ui.siteTag} />
+    <meta name="description" content={metaDescription} />
     <link rel="icon" type="image/svg+xml" href={withBase('favicon.svg')} />
     <title>{pageTitle}</title>
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang="en" href={enUrl} />
+    <link rel="alternate" hreflang="zh" href={zhUrl} />
+    <link rel="alternate" hreflang="x-default" href={enUrl} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={ui.siteName} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${ui.siteName} — ${ui.siteTag}`} />
+    <meta property="og:locale" content={ogLocale} />
+    <meta property="og:locale:alternate" content={locale === 'zh' ? 'en_US' : 'zh_CN'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={metaDescription} />
+    <meta name="twitter:image" content={ogImage} />
     <!-- Apply the saved theme before first paint to avoid a flash. -->
     <script is:inline>
       (function () {
