@@ -31,3 +31,21 @@
 }
 
 .button.news:focus-visible { outline-color: var(--warm); }
+
+/* About: portrait at the top of the sticky aside.
+   The photo's own backdrop is a dark blue-grey that measures 11.2:1
+   against the light theme (a heavy dark block, so it reads as a framed
+   print) but only 1.6:1 against the dark theme, where without help it is
+   barely distinguishable from --bg. One hairline border settles both
+   cases, using the same token as the rest of the page rules.
+
+   max-width rather than width: the aside is ~320px on desktop and
+   full-width below 800px, where .resume-grid collapses to one column. */
+.about-portrait {
+  display: block;
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  margin-bottom: 26px;
+  border: 1px solid var(--line);
+}
