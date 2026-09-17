@@ -7,8 +7,8 @@ import en from '../i18n/en.json';
 import zh from '../i18n/zh.json';
 import { localePath, withBase } from '../data/site';
 
-interface Props { title?: string; description?: string; locale: 'en' | 'zh'; path?: string; }
-const { title, description, locale, path = '' } = Astro.props;
+interface Props { title?: string; metaTitle?: string; description?: string; locale: 'en' | 'zh'; path?: string; }
+const { title, metaTitle, description, locale, path = '' } = Astro.props;
 const ui = locale === 'zh' ? zh : en;
 const nav = [
   { key: 'home', href: localePath(locale, 'blog') },
@@ -17,7 +17,11 @@ const nav = [
   { key: 'about', href: localePath(locale, 'about') },
 ];
 const alternatePath = locale === 'en' ? localePath('zh', path) : localePath('en', path);
-const pageTitle = title ? `${title} — ${ui.siteName}` : ui.siteName;
+// `title` is the page's own name and gets the site name appended; `metaTitle`
+// is a complete <title> used as-is. The homepage needs the latter: its visible
+// nav label ("Notes") is a bad <title>, since it carries no indication of who
+// the site belongs to or what they do, while the nav label must stay short.
+const pageTitle = metaTitle ?? (title ? `${title} — ${ui.siteName}` : ui.siteName);
 
 // SEO / social metadata.
 // NOTE: `path` is the *counterpart* path (it is what the language switcher
@@ -33,7 +37,11 @@ const canonicalUrl = new URL(canonicalPath, origin).href;
 const alternateUrl = new URL(alternatePath, origin).href;
 const enUrl = locale === 'en' ? canonicalUrl : alternateUrl;
 const zhUrl = locale === 'zh' ? canonicalUrl : alternateUrl;
-const metaDescription = description ?? ui.siteTag;
+// siteDescription (not siteTag) backs the meta/og description: siteTag is a
+// poetic brand line with no searchable terms, and this string surfaces in two
+// high-value places — Google's result snippet and the text under a shared
+// link's preview image. siteTag still supplies og:image:alt.
+const metaDescription = description ?? ui.siteDescription;
 const ogImage = new URL(withBase('og-cover.png'), origin).href;
 const ogLocale = locale === 'zh' ? 'zh_CN' : 'en_US';
 const themeLabels = locale === 'zh'

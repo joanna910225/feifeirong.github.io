@@ -3,7 +3,7 @@ export type ResumeLocale = 'en' | 'zh';
 export const resume = {
   en: {
     name: 'Feifei Rong',
-    headline: 'AI Engineer · Python · AI Coding & Cross-Stack Delivery · Workflow Orchestration',
+    headline: 'AI Engineer · Python · Agent Workflows · Multimodal · Retrieval',
     contact: 'feifei.rong2@gmail.com',
     linkedin: 'https://www.linkedin.com/in/feifei-rong/',
     summary: [
@@ -70,7 +70,7 @@ export const resume = {
   },
   zh: {
     name: '戎菲菲',
-    headline: 'AI 工程师 · Python · AI Coding 跨栈交付 · 工作流编排',
+    headline: 'AI 工程师 · Python · Agent 工作流 · 多模态 · 检索',
     contact: 'feifei.rong2@gmail.com',
     linkedin: 'https://www.linkedin.com/in/feifei-rong/',
     summary: [

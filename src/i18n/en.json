@@ -1,8 +1,10 @@
 {
   "siteName": "Feifei Rong",
   "siteTag": "AI systems / visual tools / field notes",
+  "siteDescription": "AI engineer in Shanghai. Agent workflows, multimodal systems, retrieval — prototype to production. Python · TypeScript · Claude Code · Codex.",
+  "homeTitle": "Feifei Rong — AI Engineer · Agent Workflows · Multimodal",
   "nav": {"home": "Notes", "news": "News", "projects": "Projects", "about": "About"},
-  "hero": {"eyebrow": "AI ENGINEER · SHANGHAI", "title": "I turn AI workflows into working products.", "body": "0-to-1 delivery, workflow orchestration, cross-platform deployment, and engineering with AI coding agents.", "prompt": "explore", "blog": "Read notes", "projects": "View projects", "news": "AI news desk · Mon / Wed / Fri"},
+  "hero": {"eyebrow": "AI ENGINEER · SHANGHAI", "title": "I turn AI workflows into working products.", "body": "0-to-1 delivery, agent workflows, multimodal systems, retrieval, and cross-platform deployment — built with Python, TypeScript and AI coding agents.", "prompt": "explore", "blog": "Read notes", "projects": "View projects", "news": "AI news desk · Mon / Wed / Fri"},
   "sections": {"latestPosts": "Latest posts", "selectedProjects": "Selected projects", "now": "Now / next", "nowBody": "Building node-based AI workflows and making media services run reliably across platforms.", "allProjects": "view all projects", "allPosts": "view all posts"},
   "news": {"title": "AI news desk", "intro": "A model-assisted digest of AI, research, tools, and the surrounding ecosystem — published every Monday, Wednesday and Friday.", "updated": "last updated", "empty": "No news files found.", "readMore": "open briefing"},
   "blog": {"title": "Field notes", "intro": "Engineering notes, AI tools, and the occasional thought from the workbench.", "read": "read note", "back": "back to notes", "min": "min read"},

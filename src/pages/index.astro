@@ -8,7 +8,7 @@ import { localePath } from '../data/site';
 const posts = (await getCollection('blog', ({ data }) => data.lang === 'en' && !data.draft)).sort((a,b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 6);
 const projects = (await getCollection('projects', ({ data }) => data.lang === 'en' && ['ComfyUI Housekeeper', 'Codex Handoff Skill', 'Hang On', 'ComfyUI Node Maintainer'].includes(data.title))).sort((a,b) => a.data.order - b.data.order);
 ---
-<BaseLayout locale="en" title={en.nav.home}>
+<BaseLayout locale="en" metaTitle={en.homeTitle}>
   <section class="hero">
     <div class="hero-copy">
       <div class="eyebrow">{en.hero.eyebrow}</div>
