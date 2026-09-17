@@ -1,10 +1,25 @@
 /* ------------------------------------------------------------------
-   Light theme — opt-in via <html data-theme="light">.
-   Loaded after global.css. Same tokens, inverted palette.
-   Kept in its own file so global.css stays untouched.
+   Theme layer. Loaded after global.css and kept in its own file so
+   global.css stays untouched.
+
+   1. Dark-theme contrast fixes (applies to the default dark palette).
+   2. Light palette, opt-in via <html data-theme="light">.
+   3. Header tools: theme toggle button.
    ------------------------------------------------------------------ */
 
 html { color-scheme: dark; }
+
+/* --- 1. Dark contrast fixes ---------------------------------------- *
+ * global.css sets --text-faint: #707970, which falls short of WCAG AA
+ * (4.5:1) everywhere it is used for real text:
+ *   .site-footer        #707970 on --bg      = 4.12:1
+ *   .section-heading a  #707970 on --bg      = 4.12:1
+ *   .card-kicker        #707970 on --surface = 3.91:1
+ *   .stack span         #707970 on #1b221c   = 3.60:1
+ * #828b83 clears all three backgrounds:
+ *   on --bg 5.28:1 · on --surface 5.01:1 · on the #1b221c chip 4.62:1
+ * The light block below overrides this again for light mode.          */
+:root { --text-faint: #828b83; }
 
 :root[data-theme='light'] {
   --bg: #fbfbf8;
