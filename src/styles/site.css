@@ -4,38 +4,30 @@
    global.css (which holds another session's uncommitted work).
    ------------------------------------------------------------------ */
 
-/* Hero: the AI news desk entry and the contact line.
-   They must stack, because .quiet-link is inline-block and would
-   otherwise sit beside the news link rather than below it. */
-.hero-links {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 14px;
-  margin-top: 26px;
+/* Hero action blocks.
+   Three .button blocks, each drawing its colour from the palette so the
+   row reads as a set rather than an accident:
+     .button.primary  -> --accent  (green, filled)   primary action
+     .button          -> --line-strong (neutral outline)
+     .button.news     -> --warm    (gold, outline)   the news desk       */
+.button.news {
+  border-color: var(--warm);
+  color: var(--warm);
 }
 
-.hero-links .quiet-link { margin-top: 0; }
-
-/* The news desk is a headline feature, not a footnote: give it the
-   outlined treatment the site already uses for secondary actions instead
-   of the muted quiet-link grey. */
-.hero-news {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  border: 1px solid var(--line-strong);
-  padding: 8px 14px;
-  color: var(--accent);
-  font-family: var(--font-mono);
-  font-size: .74rem;
-  transition: border-color .18s ease, background .18s ease, color .18s ease;
-}
-
-.hero-news:hover {
-  border-color: var(--accent);
+/* global.css .button:hover repaints the border and text to the accent
+   green; keep the news block on its own warm colour instead. */
+.button.news:hover {
+  border-color: var(--warm);
   background: var(--surface-soft);
-  color: var(--accent-strong);
+  color: var(--warm);
 }
 
-.hero-news:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* global.css defines no focus style, so keyboard users only get the
+   browser default ring. Give every block one that matches the theme. */
+.button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.button.news:focus-visible { outline-color: var(--warm); }

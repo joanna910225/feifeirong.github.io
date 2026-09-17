@@ -14,11 +14,8 @@ const projects = (await getCollection('projects', ({ data }) => data.lang === 'e
       <div class="eyebrow">{en.hero.eyebrow}</div>
       <h1>{en.hero.title}<span class="cursor">_</span></h1>
       <p>{en.hero.body}</p>
-      <div class="hero-actions"><a class="button primary" href={localePath('en', 'blog')}>{en.hero.blog}</a><a class="button" href={localePath('en', 'projects')}>{en.hero.projects}</a></div>
-      <div class="hero-links">
-        <a class="hero-news" href={localePath('en', 'news')}>{en.hero.news} →</a>
-        <a class="quiet-link" href="mailto:feifei.rong2@gmail.com">feifei.rong2@gmail.com</a>
-      </div>
+      <div class="hero-actions"><a class="button primary" href={localePath('en', 'blog')}>{en.hero.blog}</a><a class="button" href={localePath('en', 'projects')}>{en.hero.projects}</a><a class="button news" href={localePath('en', 'news')}>{en.hero.news}</a></div>
+      <a class="quiet-link" href="mailto:feifei.rong2@gmail.com">feifei.rong2@gmail.com</a>
     </div>
   </section>
   <section class="section"><div class="section-heading"><h2>{en.sections.latestPosts}</h2><a href={localePath('en', 'blog')}>{en.sections.allPosts} →</a></div><div class="blog-grid">{posts.map((post) => <BlogCard post={post} locale="en" />)}</div></section>
