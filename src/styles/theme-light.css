@@ -1,0 +1,92 @@
+/* ------------------------------------------------------------------
+   Light theme — opt-in via <html data-theme="light">.
+   Loaded after global.css. Same tokens, inverted palette.
+   Kept in its own file so global.css stays untouched.
+   ------------------------------------------------------------------ */
+
+html { color-scheme: dark; }
+
+:root[data-theme='light'] {
+  --bg: #fbfbf8;
+  --surface: #ffffff;
+  --surface-soft: #f4f5f1;
+  --line: #e4e5de;
+  --line-strong: #cbccc4;
+  --accent: #2f7a4e;
+  --accent-strong: #245f3c;
+  --warm: #8a6b2e;
+  --text: #1a1d1a;
+  --text-muted: #585f59;
+  --text-faint: #6e746e;
+}
+
+html[data-theme='light'] { color-scheme: light; }
+
+/* --- Values global.css hardcodes for the dark theme ----------------- */
+
+:root[data-theme='light'] .button.primary,
+:root[data-theme='light'] .button.primary:hover {
+  color: #ffffff;
+}
+
+:root[data-theme='light'] .stack span,
+:root[data-theme='light'] .tag {
+  background: #edf0ea;
+  color: #5a615b;
+}
+
+:root[data-theme='light'] .news-usage {
+  border-color: #c3dcc9;
+  background: #eaf3ec;
+}
+
+:root[data-theme='light'] .article-body p,
+:root[data-theme='light'] .article-body li {
+  color: #3e443f;
+}
+
+:root[data-theme='light'] .article-body pre { background: #f4f5f1; }
+
+:root[data-theme='light'] .resume-job li { color: #3e443f; }
+
+/* --- Header tools: language switcher + theme toggle ----------------- */
+
+.header-tools { display: flex; align-items: center; gap: 14px; }
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+  background: var(--surface-soft);
+  color: var(--accent);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.theme-toggle svg { width: 15px; height: 15px; display: block; }
+
+/* Dark (default): offer the sun. Light: offer the moon. */
+.theme-toggle .icon-moon { display: none; }
+html[data-theme='light'] .theme-toggle .icon-sun { display: none; }
+html[data-theme='light'] .theme-toggle .icon-moon { display: block; }
+
+@media (max-width: 560px) {
+  .header-tools { gap: 10px; }
+  .theme-toggle { width: 28px; height: 28px; }
+}

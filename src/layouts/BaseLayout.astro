@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import '../styles/theme-light.css';
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
 import en from '../i18n/en.json';
 import zh from '../i18n/zh.json';
@@ -16,6 +17,9 @@ const nav = [
 ];
 const alternatePath = locale === 'en' ? localePath('zh', path) : localePath('en', path);
 const pageTitle = title ? `${title} — ${ui.siteName}` : ui.siteName;
+const themeLabels = locale === 'zh'
+  ? { toLight: '切换到浅色主题', toDark: '切换到深色主题' }
+  : { toLight: 'Switch to light theme', toDark: 'Switch to dark theme' };
 ---
 <!doctype html>
 <html lang={locale}>
@@ -25,6 +29,17 @@ const pageTitle = title ? `${title} — ${ui.siteName}` : ui.siteName;
     <meta name="description" content={description ?? ui.siteTag} />
     <link rel="icon" type="image/svg+xml" href={withBase('favicon.svg')} />
     <title>{pageTitle}</title>
+    <!-- Apply the saved theme before first paint to avoid a flash. -->
+    <script is:inline>
+      (function () {
+        try {
+          var saved = localStorage.getItem('site-theme');
+          if (saved === 'light' || saved === 'dark') {
+            document.documentElement.setAttribute('data-theme', saved);
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div class="site-shell">
@@ -33,10 +48,48 @@ const pageTitle = title ? `${title} — ${ui.siteName}` : ui.siteName;
         <nav aria-label="Main navigation">
           {nav.map((item) => <a href={item.href} class:list={{active: Astro.url.pathname === item.href || Astro.url.pathname === `${item.href}/` || Astro.url.pathname.startsWith(`${item.href}/`)}}>{ui.nav[item.key as keyof typeof ui.nav]}</a>)}
         </nav>
-        <LanguageSwitcher locale={locale} href={alternatePath} label={ui.language} />
+        <div class="header-tools">
+          <LanguageSwitcher locale={locale} href={alternatePath} label={ui.language} />
+          <button
+            class="theme-toggle"
+            type="button"
+            aria-pressed="false"
+            aria-label={themeLabels.toLight}
+            title={themeLabels.toLight}
+            data-label-light={themeLabels.toLight}
+            data-label-dark={themeLabels.toDark}
+          >
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </button>
+        </div>
       </header>
       <main><slot /></main>
       <footer class="site-footer"><span>© {new Date().getFullYear()} Feifei Rong</span><span>{ui.footer.built}</span></footer>
     </div>
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        var btn = document.querySelector('.theme-toggle');
+        if (!btn) return;
+
+        function sync() {
+          var isLight = root.getAttribute('data-theme') === 'light';
+          var label = isLight ? btn.dataset.labelDark : btn.dataset.labelLight;
+          btn.setAttribute('aria-pressed', isLight ? 'true' : 'false');
+          btn.setAttribute('aria-label', label);
+          btn.setAttribute('title', label);
+        }
+
+        btn.addEventListener('click', function () {
+          var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+          root.setAttribute('data-theme', next);
+          try { localStorage.setItem('site-theme', next); } catch (e) {}
+          sync();
+        });
+
+        sync();
+      })();
+    </script>
   </body>
 </html>
