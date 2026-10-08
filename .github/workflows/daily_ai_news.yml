@@ -55,7 +55,7 @@ jobs:
         run: python fetch_ai_news.py
         env:
           COMMAND_CODE_API_KEY: ${{ secrets.COMMAND_CODE_API_KEY }}
-          COMMAND_CODE_MODEL: xai/grok-4.6
+          COMMAND_CODE_MODEL: deepseek/deepseek-v4-flash
           COVERAGE_MAX_DAYS: '2'
           FORCE_GENERATE: ${{ inputs.force || 'false' }}
           COVERAGE_START_UTC: ${{ inputs.coverage_start_utc || '' }}
