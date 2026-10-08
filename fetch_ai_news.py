@@ -10,17 +10,19 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 API_KEY = os.getenv("COMMAND_CODE_API_KEY")
-MODEL = os.getenv("COMMAND_CODE_MODEL", "xai/grok-4.5")
+MODEL = os.getenv("COMMAND_CODE_MODEL", "deepseek/deepseek-v4-flash")
 ROOT = Path(__file__).resolve().parent
 OUTPUT_FOLDER = ROOT / "public" / "news"
 OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
 
-# Command Code GOAT Grok 4.5 rates (USD per 1M tokens).
-# CLI web-tool charges are not published, so the saved cost is a lower bound.
+# Command Code DeepSeek V4 Flash rates (USD per 1M tokens), off-peak.
+# Peak hours (Mon-Fri 01:00-04:00 and 06:00-10:00 UTC) are 2x; the scheduled
+# run at 01:17 UTC falls in peak. CLI web-tool charges are not published, so
+# the saved cost stays a lower bound.
 PRICING = {
-    "input_per_million": 2.00,
-    "cached_input_per_million": 0.50,
-    "output_per_million": 6.00,
+    "input_per_million": 0.15,
+    "cached_input_per_million": 0.003,
+    "output_per_million": 0.60,
 }
 
 SYSTEM_PROMPT = r"""You are an evidence-first technology news editor. Research, verify, rank, and write a bilingual AI news briefing for the exact UTC window supplied by the user.
@@ -281,7 +283,7 @@ def usage_metrics(result: dict, web_search_calls: int, duration_seconds: float) 
         "cost_is_estimate": True,
         "cost_is_lower_bound": True,
         "cli_usage": raw,
-        "billing_note": "Token-cost lower bound estimated from Command Code GOAT Grok 4.5 rates; CLI web-tool charges are not included.",
+        "billing_note": "Token-cost lower bound estimated from Command Code DeepSeek V4 Flash rates; CLI web-tool charges are not included.",
     }
 
 
