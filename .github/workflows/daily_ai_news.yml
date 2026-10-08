@@ -30,7 +30,7 @@ concurrency:
 jobs:
   update-news:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
     permissions:
       contents: write
 
@@ -55,6 +55,7 @@ jobs:
         run: python fetch_ai_news.py
         env:
           COMMAND_CODE_API_KEY: ${{ secrets.COMMAND_CODE_API_KEY }}
+          COMMAND_CODE_MODEL: xai/grok-4.6
           FORCE_GENERATE: ${{ inputs.force || 'false' }}
           COVERAGE_START_UTC: ${{ inputs.coverage_start_utc || '' }}
           COVERAGE_END_UTC: ${{ inputs.coverage_end_utc || '' }}

@@ -329,7 +329,7 @@ Replace REPORT_DATE, START_UTC, END_UTC, LOOKBACK_START_UTC, START_BJT, END_BJT,
         input=f"{SYSTEM_PROMPT}\n\n{user_prompt}",
         text=True,
         capture_output=True,
-        timeout=900,
+        timeout=1800,
         cwd=ROOT,
     )
     duration = time.monotonic() - started
