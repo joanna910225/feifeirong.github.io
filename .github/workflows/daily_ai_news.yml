@@ -56,6 +56,7 @@ jobs:
         env:
           COMMAND_CODE_API_KEY: ${{ secrets.COMMAND_CODE_API_KEY }}
           COMMAND_CODE_MODEL: xai/grok-4.6
+          COVERAGE_MAX_DAYS: '2'
           FORCE_GENERATE: ${{ inputs.force || 'false' }}
           COVERAGE_START_UTC: ${{ inputs.coverage_start_utc || '' }}
           COVERAGE_END_UTC: ${{ inputs.coverage_end_utc || '' }}

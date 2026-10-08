@@ -389,6 +389,22 @@ def main() -> None:
 
     window_end = requested_end or generated_at
     window_start = requested_start or previous_briefing_time or (window_end - timedelta(hours=24))
+    max_coverage_days = 2.0
+    raw_max_days = os.getenv("COVERAGE_MAX_DAYS", "").strip()
+    if raw_max_days:
+        try:
+            max_coverage_days = float(raw_max_days)
+        except ValueError:
+            print(f"Error: COVERAGE_MAX_DAYS must be a number, got {raw_max_days!r}")
+            sys.exit(1)
+    if max_coverage_days > 0:
+        capped_start = window_end - timedelta(days=max_coverage_days)
+        if window_start < capped_start:
+            print(
+                f"Note: coverage window capped to the last {max_coverage_days:g} days "
+                f"(requested start {utc_iso(window_start)} -> {utc_iso(capped_start)})"
+            )
+            window_start = capped_start
     if window_start >= window_end:
         print(f"Error: coverage start {utc_iso(window_start)} is not before coverage end {utc_iso(window_end)}")
         sys.exit(1)
